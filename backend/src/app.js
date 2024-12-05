@@ -32,7 +32,7 @@ app.use('/api/pedidos', pedidosRoutes);
 
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3000; 
+const PORT = process.env.PORT || 3306; 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
