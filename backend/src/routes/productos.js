@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { obtenerTodosProductos, crearProducto, actualizarProducto, eliminarProducto, obtenerProductoPorId, obtenerProductoPorNombre, obtenerProductosPorCategoria, actualizarStockProducto } = require('../controllers/productosController');
+const { obtenerTodosProductos, obtenerProductoRandom, crearProducto, actualizarProducto, eliminarProducto, obtenerProductoPorId, obtenerProductoPorNombre, obtenerProductosPorCategoria, actualizarStockProducto } = require('../controllers/productosController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
 
 // Rutas del CRUD
@@ -19,6 +19,9 @@ router.get('/categoria/:nombreCategoria', obtenerProductosPorCategoria);
 
 // Obtener un producto por ID
 router.get('/:id',  obtenerProductoPorId);
+
+// Obtener un producto random
+router.get('/random', obtenerProductoRandom);
 
 // Actualizar el stock producto (solo admin)
 router.put('/actualizarStockProducto/:id', verificarToken, verificarRol([1]), actualizarStockProducto);
