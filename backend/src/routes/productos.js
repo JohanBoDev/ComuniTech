@@ -10,6 +10,8 @@ router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
 
 // Obtener todos los productos
 router.get('/todos', obtenerTodosProductos);
+// Obtener un producto random
+router.get('/random', obtenerProductoRandom);
 
 // obtener productos por nombre
 router.get('/nombre/:nombre', obtenerProductoPorNombre);
@@ -20,8 +22,7 @@ router.get('/categoria/:nombreCategoria', obtenerProductosPorCategoria);
 // Obtener un producto por ID
 router.get('/:id',  obtenerProductoPorId);
 
-// Obtener un producto random
-router.get('/random', obtenerProductoRandom);
+
 
 // Actualizar el stock producto (solo admin)
 router.put('/actualizarStockProducto/:id', verificarToken, verificarRol([1]), actualizarStockProducto);
