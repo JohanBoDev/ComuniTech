@@ -180,6 +180,29 @@ const actualizarStockProducto = async (req, res) => {
     }
 };
 
+// obtener un producto al azar
+
+const obtenerProductoRandom = async (req, res) => {
+    try {
+        // Consulta para obtener un producto aleatorio
+        const [productos] = await db.query('SELECT * FROM productos ORDER BY RAND() LIMIT 1');
+        
+        console.log('Producto encontrado:', productos); // Debug
+        
+        // Verificar si se encontró un producto
+        if (productos.length === 0) {
+            return res.status(404).json({ mensaje: 'No se encontró ningún producto.' });
+        }
+        
+        // Responder con el producto encontrado
+        res.json(productos[0]);
+    } catch (error) {
+        console.error('Error en la consulta:', error); // Debug
+        res.status(500).json({ error: 'Error al obtener el producto aleatorio.' });
+    }
+};
+
+
 
 module.exports = { obtenerTodosProductos,
     obtenerProductoPorId,
@@ -188,4 +211,5 @@ module.exports = { obtenerTodosProductos,
     actualizarProducto,
     eliminarProducto, 
     obtenerProductosPorCategoria,
-    actualizarStockProducto};
+    actualizarStockProducto,
+    obtenerProductoRandom};
