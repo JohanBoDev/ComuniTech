@@ -10,8 +10,9 @@ router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
 
 // Obtener todos los productos
 router.get('/todos', obtenerTodosProductos);
+
 // Obtener un producto random
-router.get('/random', obtenerProductoRandom);
+router.get('/randomProducto', obtenerProductoRandom);
 
 // obtener productos por nombre
 router.get('/nombre/:nombre', obtenerProductoPorNombre);
