@@ -12,6 +12,22 @@ const obtenerTodosProductos = async (req, res) => {
     }
 };
 
+// obtener un producto al azar
+const obtenerProductoRandom = async (req, res) => {
+    try {
+      const [productos] = await db.query('SELECT * FROM productos ORDER BY RAND() LIMIT 1');
+  
+      if (productos.length === 0) {
+        return res.status(404).json({ mensaje: 'No se encontraron productos.' });
+      }
+  
+      res.json(productos[0]);
+    } catch (error) {
+      console.error('Error en la consulta SQL:', error);
+      res.status(500).json({ mensaje: 'Error al obtener un producto aleatorio.' });
+    }
+  };
+
 // Obtener un producto por ID
 const obtenerProductoPorId = async (req, res) => {
     const { id } = req.params;
@@ -180,22 +196,7 @@ const actualizarStockProducto = async (req, res) => {
     }
 };
 
-// obtener un producto al azar
 
-const obtenerProductoRandom = async (req, res) => {
-    try {
-      const [productos] = await db.query('SELECT * FROM productos ORDER BY RAND() LIMIT 1');
-  
-      if (productos.length === 0) {
-        return res.status(404).json({ mensaje: 'No se encontraron productos.' });
-      }
-  
-      res.json(productos[0]);
-    } catch (error) {
-      console.error('Error en la consulta SQL:', error);
-      res.status(500).json({ mensaje: 'Error al obtener un producto aleatorio.' });
-    }
-  };
   
 
 
