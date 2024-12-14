@@ -69,7 +69,8 @@ const obtenerCarritoUsuario = async (req, res) => {
                     p.id_producto, 
                     p.nombre, 
                     c.cantidad, 
-                    p.precio, 
+                    p.precio,
+                    p.descripcion, 
                     (c.cantidad * p.precio) AS subtotal,
                     p.imagen_url
              FROM carrito c
