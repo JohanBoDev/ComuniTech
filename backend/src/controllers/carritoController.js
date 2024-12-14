@@ -65,7 +65,13 @@ const obtenerCarritoUsuario = async (req, res) => {
 
     try {
         const [productos] = await db.query(
-            `SELECT c.id AS carrito_id, p.id_producto, p.nombre, c.cantidad, p.precio, (c.cantidad * p.precio) AS subtotal
+            `SELECT c.id AS carrito_id, 
+                    p.id_producto, 
+                    p.nombre, 
+                    c.cantidad, 
+                    p.precio, 
+                    (c.cantidad * p.precio) AS subtotal,
+                    p.imagen_url
              FROM carrito c
              JOIN productos p ON c.producto_id = p.id_producto
              WHERE c.usuario_id = ?`,
@@ -84,6 +90,7 @@ const obtenerCarritoUsuario = async (req, res) => {
         return res.status(500).json({ mensaje: 'Error al obtener el carrito del usuario.' });
     }
 };
+
 
 
 // Actualizar cantidad de un producto en el carrito
