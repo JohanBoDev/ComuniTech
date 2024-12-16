@@ -98,7 +98,7 @@ const iniciarSesion = async (req, res) => {
     }
 };
 
-const RecuperarContraseña = async (req, res) => {
+const EnviarCorreoRecuperacion = async (req, res) => {
     const { email } = req.body;
   
     try {
@@ -153,10 +153,40 @@ const RecuperarContraseña = async (req, res) => {
     }
   };
 
+  const RestablecerPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+  
+    try {
+      // 1. Verificar si el token existe y es válido
+      const [user] = await db.query(
+        "SELECT * FROM usuarios WHERE reset_token = ? AND reset_token_expira > NOW()",
+        [token]
+      );
+  
+      if (user.length === 0) {
+        return res.status(400).json({ message: "El token no es válido o ha expirado." });
+      }
+  
+      // 2. Hashear la nueva contraseña
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+      // 3. Actualizar la contraseña y limpiar el token
+      await db.query(
+        "UPDATE usuarios SET contraseña = ?, reset_token = NULL, reset_token_expira = NULL WHERE id_usuario = ?",
+        [hashedPassword, user[0].id_usuario]
+      );
+  
+      res.json({ message: "Tu contraseña ha sido restablecida correctamente." });
+    } catch (error) {
+      console.error("Error al restablecer la contraseña:", error);
+      res.status(500).json({ message: "Ocurrió un error al restablecer la contraseña." });
+    }
+  };
 
 
 
 
-module.exports = { registrarUsuario, iniciarSesion, RecuperarContraseña };
+
+module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword };
 
 
