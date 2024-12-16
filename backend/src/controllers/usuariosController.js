@@ -128,7 +128,7 @@ const RecuperarContraseña = async (req, res) => {
       });
   
       // 5. Configurar el correo a enviar
-      const resetLink = `https://comunitech.com/restablecer-password?token=${token}`;
+      const resetLink = `http://localhost:5173/restablecer-password?token=${token}`;
       const mailOptions = {
         from: '"Soporte ComuniTech" <empresacomunitech@gmail.com>',
         to: email,
