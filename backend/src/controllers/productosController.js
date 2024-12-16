@@ -12,6 +12,34 @@ const obtenerTodosProductos = async (req, res) => {
     }
 };
 
+// obtener productos paginados
+const obtenerProductosPaginados = async (req, res) => {
+    try {
+        // Obtener el número de página desde los parámetros de la solicitud, por defecto es 1
+        const pagina = parseInt(req.query.pagina) || 1;
+        const limite = 8; // Número de productos por página
+        const offset = (pagina - 1) * limite;
+
+        // Consultar los productos con paginación
+        const [productos] = await db.query('SELECT * FROM productos LIMIT ? OFFSET ?', [limite, offset]);
+
+        // Obtener el total de productos para calcular la cantidad total de páginas
+        const [totalProductos] = await db.query('SELECT COUNT(*) as total FROM productos');
+        const total = totalProductos[0].total;
+        const totalPaginas = Math.ceil(total / limite);
+
+        res.json({
+            paginaActual: pagina,
+            totalPaginas,
+            totalProductos: total,
+            productos,
+        });
+    } catch (error) {
+        console.error('Error al obtener productos:', error); // Debug
+        res.status(500).json({ error: 'Error al obtener productos' });
+    }
+};
+
 // obtener un producto al azar
 const obtenerProductoRandom = async (req, res) => {
     try {
@@ -202,6 +230,7 @@ const actualizarStockProducto = async (req, res) => {
 
 
 module.exports = { obtenerTodosProductos,
+    obtenerProductosPaginados,
     obtenerProductoPorId,
     obtenerProductoPorNombre,
     crearProducto,

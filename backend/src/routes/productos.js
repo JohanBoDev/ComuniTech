@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { obtenerTodosProductos, obtenerProductoRandom, crearProducto, actualizarProducto, eliminarProducto, obtenerProductoPorId, obtenerProductoPorNombre, obtenerProductosPorCategoria, actualizarStockProducto } = require('../controllers/productosController');
+const { obtenerTodosProductos, obtenerProductosPaginados, obtenerProductoRandom, crearProducto, actualizarProducto, eliminarProducto, obtenerProductoPorId, obtenerProductoPorNombre, obtenerProductosPorCategoria, actualizarStockProducto } = require('../controllers/productosController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
 
-// Rutas del CRUD
+// Rutas del CRUD de productos
 
 // Crear producto (solo admin)
 router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
@@ -13,6 +13,8 @@ router.get('/todos', obtenerTodosProductos);
 
 // Obtener un producto random
 router.get('/randomProducto', obtenerProductoRandom);
+
+router.get('/paginados', obtenerProductosPaginados);
 
 // obtener productos por nombre
 router.get('/nombre/:nombre', obtenerProductoPorNombre);
