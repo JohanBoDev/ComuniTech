@@ -9,6 +9,6 @@ router.post('/registro', registrarUsuario);
 router.post('/login', iniciarSesion);
 
 // Ruta para recuperar contraseña
-router.post('/recuperar-contraseña', RecuperarContraseña);
+router.post('/recuperar-password', RecuperarContraseña);
 
 module.exports = router;
