@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const db = require('../config/db');
 
 // Registrar usuario
@@ -96,6 +98,65 @@ const iniciarSesion = async (req, res) => {
     }
 };
 
+const RecuperarContraseña = async (req, res) => {
+    const { email } = req.body;
+  
+    try {
+      // 1. Verificar si el correo existe en la base de datos
+      const [user] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email]);
+      if (user.length === 0) {
+        return res.status(404).json({ message: "El correo electrónico no está registrado." });
+      }
+  
+      // 2. Generar un token seguro y definir su expiración
+      const token = crypto.randomBytes(32).toString("hex");
+      const expiracion = new Date(Date.now() + 60 * 60 * 1000); // Token válido por 1 hora
+  
+      // 3. Guardar el token y la expiración en la base de datos
+      await db.query(
+        "UPDATE usuarios SET reset_token = ?, reset_token_expira = ? WHERE email = ?",
+        [token, expiracion, email]
+      );
+  
+      // 4. Configurar el transporte de Nodemailer
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "empresacomunitech@gmail.com", // Correo oficial
+          pass: "whkt ziud rung cxcg", // Contraseña de aplicación de Gmail
+        },
+      });
+  
+      // 5. Configurar el correo a enviar
+      const resetLink = `https://comunitech.com/restablecer-password?token=${token}`;
+      const mailOptions = {
+        from: '"Soporte ComuniTech" <empresacomunitech@gmail.com>',
+        to: email,
+        subject: "Recuperación de Contraseña",
+        html: `
+          <h2>Recuperación de Contraseña</h2>
+          <p>Haz clic en el siguiente enlace para restablecer tu contraseña. Este enlace es válido por 1 hora:</p>
+          <a href="${resetLink}" target="_blank" style="color: blue; text-decoration: underline;">Restablecer Contraseña</a>
+          <p>Si no solicitaste este correo, ignóralo.</p>
+        `,
+      };
+  
+      // 6. Enviar el correo
+      await transporter.sendMail(mailOptions);
+  
+      res.json({
+        message: "Se ha enviado un enlace de recuperación al correo proporcionado.",
+      });
+    } catch (error) {
+      console.error("Error en recuperación de contraseña:", error);
+      res.status(500).json({ message: "Ocurrió un error al procesar la solicitud." });
+    }
+  };
 
 
-module.exports = { registrarUsuario, iniciarSesion };
+
+
+
+module.exports = { registrarUsuario, iniciarSesion, RecuperarContraseña };
+
+
