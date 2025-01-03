@@ -281,10 +281,38 @@ const RestablecerPassword = async (req, res) => {
   }
 };
 
+const editarUsuario = async (req, res) => {
+  const { id_usuario } = req.params; // ID del usuario a actualizar
+  const { nombre, email } = req.body; // Datos enviados desde el frontend
+
+  try {
+    // Validar que se envíen los datos necesarios
+    if (!nombre || !email) {
+      return res.status(400).json({ message: "Nombre y email son requeridos." });
+    }
+
+    // Actualizar los datos en la base de datos
+    const [result] = await db.query(
+      "UPDATE usuarios SET nombre = ?, email = ? WHERE id_usuario = ?",
+      [nombre, email, id_usuario]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+
+    res.status(200).json({ message: "Usuario actualizado correctamente." });
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).json({ message: "Ocurrió un error al actualizar el usuario." });
+  }
+};
 
 
 
 
-module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId, subirFotoPerfil, upload };
+
+
+module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId,editarUsuario, subirFotoPerfil, upload };
 
 
