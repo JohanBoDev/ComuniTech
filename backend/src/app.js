@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const cloudinary = require("cloudinary").v2;
 const usuariosRoutes = require('./routes/usuarios');
 const productosRoutes = require('./routes/productos');
 const carritoRoutes = require('./routes/carrito');
@@ -17,6 +18,14 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // Para procesar JSON
 
+
+// Configuración de Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 // Rutas básicas
 app.get('/', (req, res) => {
     res.send('¡Bienvenido a ComuniTech API!');
@@ -32,7 +41,7 @@ app.use('/api/pedidos', pedidosRoutes);
 
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3306; 
+const PORT = process.env.PORT || 3306;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
