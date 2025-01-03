@@ -79,6 +79,28 @@ const subirFotoPerfil = async (req, res) => {
   }
 };
 
+// Controlador para obtener la información del usuario
+const obtenerUsuarioPorId = async (req, res) => {
+  const { id_usuario } = req.params; // Obtener el id_usuario de los parámetros de la solicitud
+
+  try {
+    // Consulta a la base de datos para obtener el usuario
+    const [rows] = await db.query('SELECT id_usuario, nombre, email, foto_perfil FROM usuarios WHERE id_usuario = ?', [id_usuario]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+
+    // Devolver la información del usuario
+    res.json({
+      message: 'Usuario obtenido correctamente.',
+      usuario: rows[0],
+    });
+  } catch (error) {
+    console.error('Error al obtener la información del usuario:', error);
+    res.status(500).json({ message: 'Error al obtener la información del usuario.' });
+  }
+};
 
 // Registrar usuario
 const registrarUsuario = async (req, res) => {
@@ -262,6 +284,6 @@ const RestablecerPassword = async (req, res) => {
 
 
 
-module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword, subirFotoPerfil, upload };
+module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId, subirFotoPerfil, upload };
 
 

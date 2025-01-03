@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword, subirFotoPerfil, upload } = require('../controllers/usuariosController');
+const { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId subirFotoPerfil, upload } = require('../controllers/usuariosController');
 
 // Ruta para registrar usuarios
 router.post('/registro', registrarUsuario);
@@ -16,5 +16,8 @@ router.post('/recuperar-password', RestablecerPassword);
 
 // Endpoint para subir la foto de perfil
 router.post("/:id_usuario/foto", upload.single("fotoPerfil"), subirFotoPerfil);
+
+// Endpoint para obtener un usuario por ID
+router.get("/:id_usuario", obtenerUsuarioPorId);
 
 module.exports = router;
