@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId subirFotoPerfil, upload } = require('../controllers/usuariosController');
+const { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId, subirFotoPerfil, upload } = require('../controllers/usuariosController');
 
 // Ruta para registrar usuarios
 router.post('/registro', registrarUsuario);
