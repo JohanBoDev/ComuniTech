@@ -21,8 +21,9 @@ const iniciarPago = async (req, res) => {
         const total = productos.reduce((acc, item) => acc + item.cantidad * item.precio, 0);
 
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(total * 100), 
-            currency: 'cop', 
+            amount: Math.round(total * 100), // Convertir a centavos
+            currency: 'cop',
+            automatic_payment_methods: { enabled: true }, // Habilitar métodos de pago automáticos
             metadata: {
                 usuario_id: usuario_id.toString(),
             },
@@ -33,21 +34,25 @@ const iniciarPago = async (req, res) => {
             total: total,
             metodo_pago: 'Stripe (Tarjeta de Crédito)',
             clientSecret: paymentIntent.client_secret, // Enviar el clientSecret al frontend
+            paymentIntentId: paymentIntent.id, // ID del PaymentIntent
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error al iniciar el pago con Stripe:', error);
         res.status(500).json({ mensaje: 'Error al iniciar el pago con Stripe.' });
     }
 };
 
 
+
 const confirmarPago = async (req, res) => {
-    const { paymentIntentId, direccion_id } = req.body;
+    const { paymentIntentId, payment_method, direccion_id } = req.body;
     const usuario_id = req.usuario.id;
 
     try {
-        // Recuperar el PaymentIntent desde Stripe
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        // Confirmar el PaymentIntent con el método de pago
+        const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
+            payment_method,
+        });
 
         if (paymentIntent.status !== 'succeeded') {
             return res.status(400).json({ mensaje: 'El pago no fue exitoso.' });
@@ -129,6 +134,7 @@ const confirmarPago = async (req, res) => {
         res.status(500).json({ mensaje: 'Error al confirmar el pago con Stripe.' });
     }
 };
+
 
 
 
