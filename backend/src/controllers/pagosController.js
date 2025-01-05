@@ -6,6 +6,7 @@ const iniciarPago = async (req, res) => {
     const usuario_id = req.usuario.id;
 
     try {
+        // Obtener productos del carrito del usuario
         const [productos] = await db.query(
             `SELECT c.cantidad, p.precio
              FROM carrito c
@@ -18,12 +19,15 @@ const iniciarPago = async (req, res) => {
             return res.status(400).json({ mensaje: 'El carrito está vacío.' });
         }
 
+        // Calcular el total
         const total = productos.reduce((acc, item) => acc + item.cantidad * item.precio, 0);
 
+        // Crear el PaymentIntent con el método de pago incluido
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(total * 100), // Convertir a centavos
-            currency: 'cop',
-            automatic_payment_methods: { enabled: true }, // Habilitar métodos de pago automáticos
+            amount: Math.round(total * 100), // Stripe usa centavos
+            currency: 'cop', // Configurar la moneda como COP (Pesos colombianos)
+            payment_method: 'pm_card_visa', // Usar un método de pago de prueba
+            payment_method_types: ['card'], // Aceptar solo tarjetas
             metadata: {
                 usuario_id: usuario_id.toString(),
             },
@@ -33,14 +37,14 @@ const iniciarPago = async (req, res) => {
             mensaje: 'Pago iniciado.',
             total: total,
             metodo_pago: 'Stripe (Tarjeta de Crédito)',
-            clientSecret: paymentIntent.client_secret, // Enviar el clientSecret al frontend
-            paymentIntentId: paymentIntent.id, // ID del PaymentIntent
+            clientSecret: paymentIntent.client_secret, // Enviar al frontend para el cliente
         });
     } catch (error) {
         console.error('Error al iniciar el pago con Stripe:', error);
         res.status(500).json({ mensaje: 'Error al iniciar el pago con Stripe.' });
     }
 };
+
 
 
 
