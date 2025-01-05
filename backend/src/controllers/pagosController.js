@@ -45,7 +45,7 @@ const iniciarPago = async (req, res) => {
 
 
 const confirmarPago = async (req, res) => {
-    const { paymentIntentId, payment_method, direccion_id } = req.body;
+    const { paymentIntentId, direccion_id, payment_method } = req.body; // Asegúrate de que el cliente envíe `payment_method`
     const usuario_id = req.usuario.id;
 
     try {
@@ -102,8 +102,11 @@ const confirmarPago = async (req, res) => {
             return res.status(400).json({ mensaje: 'El carrito está vacío. No se puede crear un pedido.' });
         }
 
-        const detalles = carrito.map(item => [
-            pedido.insertId, item.producto_id, item.cantidad, item.precio
+        const detalles = carrito.map((item) => [
+            pedido.insertId,
+            item.producto_id,
+            item.cantidad,
+            item.precio,
         ]);
 
         await db.query(
@@ -134,7 +137,6 @@ const confirmarPago = async (req, res) => {
         res.status(500).json({ mensaje: 'Error al confirmar el pago con Stripe.' });
     }
 };
-
 
 
 
