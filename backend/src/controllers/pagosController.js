@@ -2,13 +2,14 @@ const db = require('../config/db');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const jwt = require('jsonwebtoken');
 
-const iniciarPago = async (req, res) => {
-    const usuario_id = req.usuario.id;
+// Crear una sesión de Stripe Checkout
+const crearCheckoutSession = async (req, res) => {
+    const { usuario_id } = req.body; // Recoger el ID del usuario
 
     try {
-        // Obtener productos del carrito del usuario
+        // Obtener los productos del carrito del usuario
         const [productos] = await db.query(
-            `SELECT c.cantidad, p.precio
+            `SELECT c.cantidad, p.nombre, p.precio, p.imagen_url
              FROM carrito c
              JOIN productos p ON c.producto_id = p.id_producto
              WHERE c.usuario_id = ?`,
@@ -19,132 +20,37 @@ const iniciarPago = async (req, res) => {
             return res.status(400).json({ mensaje: 'El carrito está vacío.' });
         }
 
-        // Calcular el total
-        const total = productos.reduce((acc, item) => acc + item.cantidad * item.precio, 0);
+        // Crear los elementos de la sesión de Stripe a partir del carrito
+        const line_items = productos.map((item) => ({
+            price_data: {
+                currency: 'cop', // Moneda en pesos colombianos
+                product_data: {
+                    name: item.nombre,
+                    images: [item.imagen_url || 'https://via.placeholder.com/150'], // URL de la imagen
+                },
+                unit_amount: Math.round(item.precio * 100), // Convertir a centavos
+            },
+            quantity: item.cantidad,
+        }));
 
-        // Crear el PaymentIntent con el método de pago incluido
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(total * 100), // Stripe usa centavos
-            currency: 'cop', // Configurar la moneda como COP (Pesos colombianos)
-            payment_method: 'pm_card_visa', // Usar un método de pago de prueba
-            payment_method_types: ['card'], // Aceptar solo tarjetas
+        // Crear la sesión de Stripe Checkout
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'], // Métodos de pago admitidos
+            line_items,
+            mode: 'payment', // Modo de pago completo
+            success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`, // URL de éxito
+            cancel_url: `${process.env.FRONTEND_URL}/cancel`, // URL de cancelación
             metadata: {
-                usuario_id: usuario_id.toString(),
+                usuario_id: usuario_id, // Pasar el ID del usuario como metadato
             },
         });
 
-        res.status(200).json({
-            mensaje: 'Pago iniciado.',
-            total: total,
-            metodo_pago: 'Stripe (Tarjeta de Crédito)',
-            clientSecret: paymentIntent.client_secret, // Enviar al frontend para el cliente
-        });
+        // Devolver el URL de la sesión de Stripe
+        res.status(200).json({ url: session.url });
     } catch (error) {
-        console.error('Error al iniciar el pago con Stripe:', error);
-        res.status(500).json({ mensaje: 'Error al iniciar el pago con Stripe.' });
+        console.error('Error al crear la sesión de checkout:', error);
+        res.status(500).json({ mensaje: 'Error al crear la sesión de checkout.', error });
     }
 };
 
-
-
-
-const confirmarPago = async (req, res) => {
-    const { paymentIntentId, direccion_id, payment_method } = req.body; // Asegúrate de que el cliente envíe `payment_method`
-    const usuario_id = req.usuario.id;
-
-    try {
-        // Confirmar el PaymentIntent con el método de pago
-        const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
-            payment_method,
-        });
-
-        if (paymentIntent.status !== 'succeeded') {
-            return res.status(400).json({ mensaje: 'El pago no fue exitoso.' });
-        }
-
-        const monto = paymentIntent.amount / 100; // Convertir de centavos a pesos
-        const referencia_transaccion = paymentIntent.id;
-
-        // Validar si la dirección existe y pertenece al usuario
-        const [direccion] = await db.query(
-            `SELECT * FROM direcciones WHERE id_direccion = ? AND usuario_id = ?`,
-            [direccion_id, usuario_id]
-        );
-
-        if (!direccion.length) {
-            return res.status(400).json({ mensaje: 'La dirección de envío no es válida.' });
-        }
-
-        // Registrar el pago
-        await db.query(
-            `INSERT INTO pagos (metodo_pago, estado_pago, referencia_transaccion, monto, fecha_pago)
-             VALUES (?, ?, ?, ?, NOW())`,
-            ['Stripe', 'Exitoso', referencia_transaccion, monto]
-        );
-
-        // Crear un pedido con la dirección de envío
-        const [pedido] = await db.query(
-            `INSERT INTO pedidos (usuario_id, direccion_id, fecha_pedido, estado, total)
-             VALUES (?, ?, NOW(), 'Pendiente', ?);`,
-            [usuario_id, direccion_id, monto]
-        );
-
-        if (!pedido.insertId) {
-            throw new Error('No se pudo obtener el ID del pedido.');
-        }
-
-        // Mover productos del carrito a detalles_pedido
-        const [carrito] = await db.query(
-            `SELECT c.producto_id, c.cantidad, p.precio
-             FROM carrito c
-             JOIN productos p ON c.producto_id = p.id_producto
-             WHERE c.usuario_id = ?`,
-            [usuario_id]
-        );
-
-        if (carrito.length === 0) {
-            return res.status(400).json({ mensaje: 'El carrito está vacío. No se puede crear un pedido.' });
-        }
-
-        const detalles = carrito.map((item) => [
-            pedido.insertId,
-            item.producto_id,
-            item.cantidad,
-            item.precio,
-        ]);
-
-        await db.query(
-            `INSERT INTO detalles_pedido (pedido_id, producto_id, cantidad, precio_unitario)
-             VALUES ?`,
-            [detalles]
-        );
-
-        // Reducir el stock de los productos
-        for (const item of carrito) {
-            await db.query(
-                `UPDATE productos
-                 SET stock = stock - ?
-                 WHERE id_producto = ? AND stock >= ?`,
-                [item.cantidad, item.producto_id, item.cantidad]
-            );
-        }
-
-        // Vaciar el carrito
-        await db.query(`DELETE FROM carrito WHERE usuario_id = ?`, [usuario_id]);
-
-        res.status(200).json({
-            mensaje: 'Pago confirmado, pedido creado, dirección asignada y stock actualizado.',
-            id_pedido: pedido.insertId,
-        });
-    } catch (error) {
-        console.error('Error al confirmar el pago con Stripe:', error);
-        res.status(500).json({ mensaje: 'Error al confirmar el pago con Stripe.' });
-    }
-};
-
-
-
-
-
-
-module.exports = { iniciarPago, confirmarPago };
+module.exports = { crearCheckoutSession };
