@@ -38,9 +38,14 @@ const obtenerDetallesPedido = async (req, res) => {
             return res.status(404).json({ mensaje: 'El pedido no existe o no pertenece al usuario.' });
         }
 
-        // Obtener los detalles del pedido
+        // Obtener los detalles del pedido incluyendo la imagen del producto
         const [detalles] = await db.query(
-            `SELECT dp.producto_id, p.nombre AS producto_nombre, dp.cantidad, dp.precio_unitario
+            `SELECT 
+                dp.producto_id, 
+                p.nombre AS producto_nombre, 
+                dp.cantidad, 
+                dp.precio_unitario, 
+                p.imagen_url 
              FROM detalles_pedido dp
              JOIN productos p ON dp.producto_id = p.id_producto
              WHERE dp.pedido_id = ?`,
@@ -56,6 +61,7 @@ const obtenerDetallesPedido = async (req, res) => {
         res.status(500).json({ mensaje: 'Error al obtener los detalles del pedido.' });
     }
 };
+
 
 const actualizarEstadoPedido = async (req, res) => {
     const { id_pedido, nuevo_estado } = req.body;
