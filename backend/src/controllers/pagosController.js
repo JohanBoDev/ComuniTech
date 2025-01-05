@@ -22,7 +22,7 @@ const iniciarPago = async (req, res) => {
 
         const paymentIntent = await stripe.paymentIntents.create({
             amount: Math.round(total * 100), 
-            currency: 'col', 
+            currency: 'cop', 
             metadata: {
                 usuario_id: usuario_id.toString(),
             },
