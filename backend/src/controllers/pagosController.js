@@ -1,9 +1,10 @@
 const db = require('../config/db');
-
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const jwt = require('jsonwebtoken');
 
 const iniciarPago = async (req, res) => {
     const usuario_id = req.usuario.id;
+
     try {
         const [productos] = await db.query(
             `SELECT c.cantidad, p.precio
@@ -18,57 +19,42 @@ const iniciarPago = async (req, res) => {
         }
 
         const total = productos.reduce((acc, item) => acc + item.cantidad * item.precio, 0);
-        const referenciaTransaccion = `PAY-${Date.now()}`;
 
-        // Generar un token firmado con el total y la referencia
-        const tokenPago = jwt.sign(
-            { referenciaTransaccion, total },
-            process.env.JWT_SECRET,
-            { expiresIn: '15m' }
-        );
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(total * 100), 
+            currency: 'col', 
+            metadata: {
+                usuario_id: usuario_id.toString(),
+            },
+        });
 
         res.status(200).json({
             mensaje: 'Pago iniciado.',
-            referencia_transaccion: referenciaTransaccion,
             total: total,
-            metodo_pago: 'Simulación (Tarjeta de Crédito)',
-            tokenPago,
+            metodo_pago: 'Stripe (Tarjeta de Crédito)',
+            clientSecret: paymentIntent.client_secret, // Enviar el clientSecret al frontend
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ mensaje: 'Error al iniciar el pago.' });
+        res.status(500).json({ mensaje: 'Error al iniciar el pago con Stripe.' });
     }
 };
 
+
 const confirmarPago = async (req, res) => {
-    const { referencia_transaccion, estado_pago, metodo_pago, monto, tokenPago, direccion_id } = req.body;
+    const { paymentIntentId, direccion_id } = req.body;
     const usuario_id = req.usuario.id;
 
     try {
-        // Verificar el token de pago
-        const datosToken = jwt.verify(tokenPago, process.env.JWT_SECRET);
+        // Recuperar el PaymentIntent desde Stripe
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-        if (datosToken.referenciaTransaccion !== referencia_transaccion) {
-            return res.status(400).json({ mensaje: 'La referencia de transacción no coincide.' });
-        }
-
-        if (datosToken.total !== monto) {
-            return res.status(400).json({ mensaje: 'El monto del pago no coincide con el total calculado.' });
-        }
-
-        if (estado_pago !== 'Exitoso') {
+        if (paymentIntent.status !== 'succeeded') {
             return res.status(400).json({ mensaje: 'El pago no fue exitoso.' });
         }
 
-        // Validar si la transacción ya existe
-        const [transaccionExistente] = await db.query(
-            `SELECT * FROM pagos WHERE referencia_transaccion = ?`,
-            [referencia_transaccion]
-        );
-
-        if (transaccionExistente.length > 0) {
-            return res.status(400).json({ mensaje: 'La transacción ya fue procesada.' });
-        }
+        const monto = paymentIntent.amount / 100; // Convertir de centavos a pesos
+        const referencia_transaccion = paymentIntent.id;
 
         // Validar si la dirección existe y pertenece al usuario
         const [direccion] = await db.query(
@@ -81,10 +67,10 @@ const confirmarPago = async (req, res) => {
         }
 
         // Registrar el pago
-        const [pago] = await db.query(
+        await db.query(
             `INSERT INTO pagos (metodo_pago, estado_pago, referencia_transaccion, monto, fecha_pago)
              VALUES (?, ?, ?, ?, NOW())`,
-            [metodo_pago, estado_pago, referencia_transaccion, monto]
+            ['Stripe', 'Exitoso', referencia_transaccion, monto]
         );
 
         // Crear un pedido con la dirección de envío
@@ -139,19 +125,12 @@ const confirmarPago = async (req, res) => {
             id_pedido: pedido.insertId,
         });
     } catch (error) {
-        console.error('Error al confirmar el pago:', error);
-
-        if (error.name === 'TokenExpiredError') {
-            return res.status(400).json({ mensaje: 'El token de pago ha expirado.' });
-        }
-
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(400).json({ mensaje: 'Token de pago no válido.' });
-        }
-
-        res.status(500).json({ mensaje: 'Error al confirmar el pago.' });
+        console.error('Error al confirmar el pago con Stripe:', error);
+        res.status(500).json({ mensaje: 'Error al confirmar el pago con Stripe.' });
     }
 };
+
+
 
 
 
