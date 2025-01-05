@@ -32,6 +32,18 @@ app.get('/', (req, res) => {
     res.send('¡Bienvenido a ComuniTech API!');
 });
 
+app.get('/succes', (req, res) => {
+    res.send('Pago exitoso');
+});
+
+app.get('/cancel', (req, res) => {
+    res.send('Pago cancelado');
+});
+
+
+
+
+
 // Importa rutas principales (pronto las crearemos)
 app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
@@ -39,7 +51,6 @@ app.use('/api/carrito', carritoRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use('/api/direcciones', direccionesRoutes);
 app.use('/api/pedidos', pedidosRoutes);
-
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3306;
