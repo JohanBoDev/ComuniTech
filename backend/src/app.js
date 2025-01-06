@@ -15,13 +15,17 @@ const pedidosRoutes = require('./routes/pedidos');
 dotenv.config();
 
 const app = express();
-app.use((req, res, next) => {
-    if (req.originalUrl === '/webhook/stripe') {
-        next(); // Saltar express.json() para esta ruta
-    } else {
-        express.json()(req, res, next);
-    }
+
+// Middleware de CORS
+app.use(cors());
+
+// Configuración de Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
 // Ruta del webhook configurada con `bodyParser.raw`
 app.post(
     '/webhook/stripe',
@@ -34,22 +38,8 @@ app.post(
     stripeWebhook
 );
 
-
-// Middlewares
-app.use(cors());
-app.use(express.json()); // Para procesar JSON
-
-
-// Configuración de Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-
-// Middleware para omitir express.json() en el webhook de Stripe
-
+// Otros middlewares (se procesan después del webhook)
+app.use(express.json());
 
 // Rutas básicas
 app.get('/', (req, res) => {
@@ -64,10 +54,7 @@ app.get('/cancel', (req, res) => {
     res.send('Pago cancelado');
 });
 
-
-
-//  rutas principales 
-
+//  rutas principales
 app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/carrito', carritoRoutes);
@@ -80,5 +67,3 @@ const PORT = process.env.PORT || 3306;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
-
-
