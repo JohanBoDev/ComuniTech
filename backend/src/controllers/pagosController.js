@@ -38,8 +38,8 @@ const crearCheckoutSession = async (req, res) => {
             payment_method_types: ['card'], // Métodos de pago admitidos
             line_items,
             mode: 'payment', // Modo de pago completo
-            cancel_url : 'https://comunitech.onrender.com/carrito', // URL de cancelación
-            success_url : 'https://comunitech.onrender.com/success', // URL de éxito
+            cancel_url : 'http://localhost:5173/carrito', // URL de cancelación
+            success_url : 'http://localhost:5173/', // URL de éxito
             metadata: {
                 usuario_id: usuario_id, // Pasar el ID del usuario como metadato
             },
