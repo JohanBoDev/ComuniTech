@@ -79,4 +79,4 @@ const stripeWebhook = async (req, res) => {
     res.status(200).json({ received: true });
 };
 
-module.exports = { stripeWebhook };
+module.exports =  stripeWebhook ;
