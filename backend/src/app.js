@@ -16,8 +16,16 @@ dotenv.config();
 
 const app = express();
 
-// Middleware de CORS
-app.use(cors());
+// Middlewares globales
+app.use(cors()); // Permitir solicitudes desde cualquier origen
+app.use((req, res, next) => {
+    // Omite express.json() para la ruta del webhook
+    if (req.originalUrl === '/webhook/stripe') {
+        next();
+    } else {
+        express.json()(req, res, next);
+    }
+});
 
 // Configuración de Cloudinary
 cloudinary.config({
@@ -25,21 +33,6 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-// Ruta del webhook configurada con `bodyParser.raw`
-app.post(
-    '/webhook/stripe',
-    bodyParser.raw({ type: 'application/json' }), // Procesar el cuerpo como raw buffer
-    (req, res, next) => {
-        console.log("Headers recibidos en el webhook:", req.headers);
-        console.log("Cuerpo recibido antes del controlador:", req.body); // Esto debería ser un Buffer
-        next();
-    },
-    stripeWebhook
-);
-
-// Otros middlewares (se procesan después del webhook)
-app.use(express.json());
 
 // Rutas básicas
 app.get('/', (req, res) => {
@@ -54,7 +47,19 @@ app.get('/cancel', (req, res) => {
     res.send('Pago cancelado');
 });
 
-//  rutas principales
+// Configuración de la ruta del webhook
+app.post(
+    '/webhook/stripe',
+    bodyParser.raw({ type: 'application/json' }), // Procesar el cuerpo como raw buffer
+    (req, res, next) => {
+        console.log("Headers recibidos en el webhook:", req.headers);
+        console.log("Cuerpo recibido antes del controlador:", req.body); // Esto debería ser un Buffer
+        next();
+    },
+    stripeWebhook
+);
+
+// Rutas principales
 app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/carrito', carritoRoutes);
