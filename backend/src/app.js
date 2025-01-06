@@ -29,6 +29,15 @@ cloudinary.config({
 });
 
 
+// Middleware para omitir express.json() en el webhook de Stripe
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook/stripe') {
+        next(); // Saltar express.json() para esta ruta
+    } else {
+        express.json()(req, res, next);
+    }
+});
+
 // Rutas básicas
 app.get('/', (req, res) => {
     res.send('¡Bienvenido a ComuniTech API!');
@@ -42,20 +51,12 @@ app.get('/cancel', (req, res) => {
     res.send('Pago cancelado');
 });
 
-
-  app.use((req, res, next) => {
-    if (req.originalUrl === '/webhook/stripe') {
-        next(); // No aplicar express.json() para esta ruta
-    } else {
-        express.json()(req, res, next);
-    }
-});
-
+// Ruta del webhook configurada con `bodyParser.raw`
 app.post(
     '/webhook/stripe',
-    bodyParser.raw({ type: 'application/json' }), // Middleware para procesar el cuerpo como raw buffer
+    bodyParser.raw({ type: 'application/json' }), // Procesar el cuerpo como raw buffer
     stripeWebhook
-  );
+);
 
 //  rutas principales 
 
