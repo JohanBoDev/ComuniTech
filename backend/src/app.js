@@ -43,12 +43,19 @@ app.get('/cancel', (req, res) => {
 });
 
 
+  app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook/stripe') {
+        next(); // No aplicar express.json() para esta ruta
+    } else {
+        express.json()(req, res, next);
+    }
+});
+
 app.post(
     '/webhook/stripe',
     bodyParser.raw({ type: 'application/json' }), // Middleware para procesar el cuerpo como raw buffer
     stripeWebhook
   );
-
 
 //  rutas principales 
 
