@@ -1,7 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const cloudinary = require("cloudinary").v2;
+const stripeWebhook  = require('./controllers/stripeController');
 const usuariosRoutes = require('./routes/usuarios');
 const productosRoutes = require('./routes/productos');
 const carritoRoutes = require('./routes/carrito');
@@ -44,7 +46,8 @@ app.get('/cancel', (req, res) => {
 
 
 
-// Importa rutas principales (pronto las crearemos)
+//  rutas principales 
+app.post('/webhook/stripe', bodyParser.raw({ type: 'application/json' }), stripeWebhook);
 app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/carrito', carritoRoutes);

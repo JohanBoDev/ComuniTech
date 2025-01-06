@@ -8,5 +8,4 @@ const { verificarToken } = require('../middlewares/authMiddleware');
 router.post('/pagar',verificarToken, crearCheckoutSession); // Iniciar pago
 
 
-
 module.exports = router;
