@@ -43,11 +43,15 @@ app.get('/cancel', (req, res) => {
 });
 
 
-
+app.post(
+    '/webhook/stripe',
+    bodyParser.raw({ type: 'application/json' }), // Middleware para procesar el cuerpo como raw buffer
+    stripeWebhook
+  );
 
 
 //  rutas principales 
-app.post('/webhook/stripe', bodyParser.raw({ type: 'application/json' }), stripeWebhook);
+
 app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/carrito', carritoRoutes);
