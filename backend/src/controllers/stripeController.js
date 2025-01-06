@@ -15,16 +15,16 @@ const stripeWebhook = async (req, res) => {
     let event;
 
     try {
-        // Log del cuerpo bruto para verificar el payload
-        if (!req.rawBody) {
-            console.error("Error: No se recibió el cuerpo 'rawBody'.");
-            return res.status(400).send("Webhook Error: Missing rawBody.");
+        // Verificar si se recibió el rawBody como Buffer
+        if (!req.body || !(req.body instanceof Buffer)) {
+            console.error("Error: No se recibió el cuerpo 'rawBody' como Buffer.");
+            return res.status(400).send("Webhook Error: Missing or invalid rawBody.");
         }
 
-        console.log("Cuerpo del webhook recibido:", req.rawBody.toString());
+        console.log("Cuerpo del webhook recibido (Buffer):", req.body);
 
         // Verificar el evento recibido desde Stripe
-        event = stripe.webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
         console.log("Evento construido correctamente:", event);
     } catch (err) {
         console.error("Error verificando el webhook:", err.message);
@@ -113,4 +113,3 @@ const stripeWebhook = async (req, res) => {
 };
 
 module.exports = stripeWebhook;
-
