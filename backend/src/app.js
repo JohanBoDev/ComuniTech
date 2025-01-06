@@ -15,7 +15,13 @@ const pedidosRoutes = require('./routes/pedidos');
 dotenv.config();
 
 const app = express();
-
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook/stripe') {
+        next(); // Saltar express.json() para esta ruta
+    } else {
+        express.json()(req, res, next);
+    }
+});
 // Middlewares
 app.use(cors());
 app.use(express.json()); // Para procesar JSON
@@ -30,13 +36,7 @@ cloudinary.config({
 
 
 // Middleware para omitir express.json() en el webhook de Stripe
-app.use((req, res, next) => {
-    if (req.originalUrl === '/webhook/stripe') {
-        next(); // Saltar express.json() para esta ruta
-    } else {
-        express.json()(req, res, next);
-    }
-});
+
 // Ruta del webhook configurada con `bodyParser.raw`
 app.post(
     '/webhook/stripe',
