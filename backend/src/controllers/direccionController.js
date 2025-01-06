@@ -181,7 +181,33 @@ const seleccionarDireccionParaPedido = async (req, res) => {
     }
 };
 
+const obtenerDireccionPorId = async (req, res) => {
+    const { id_direccion } = req.params;
+
+    try {
+        // Obtener la dirección de la base de datos
+        const [direccion] = await db.query(
+            `SELECT id_direccion, direccion, ciudad, estado, codigo_postal, pais, telefono 
+             FROM direcciones 
+             WHERE id_direccion = ?`,
+            [id_direccion]
+        );
+
+        // Verificar si la dirección existe
+        if (direccion.length === 0) {
+            return res.status(404).json({ mensaje: 'La dirección no existe.' });
+        }
+
+        res.status(200).json(direccion[0]);
+    } catch (error) {
+        console.error('Error al obtener la dirección:', error);
+        res.status(500).json({ mensaje: 'Error al obtener la dirección.' });
+    }
+};
 
 
 
-module.exports = { crearDireccion, obtenerDirecciones, actualizarDireccion, eliminarDireccion, seleccionarDireccionParaPedido };
+
+
+
+module.exports = { crearDireccion, obtenerDirecciones, actualizarDireccion, eliminarDireccion, seleccionarDireccionParaPedido, obtenerDireccionPorId };
