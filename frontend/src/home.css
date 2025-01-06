@@ -1,0 +1,27 @@
+.home-section {
+    height: 100vh; /* Ocupa la altura completa de la ventana */
+    position: relative;
+  }
+  
+  .home-section .bg-cover {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  .home-section h1 {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  
+  .home-section p {
+    color: #f3f4f6; /* Gris claro para contraste */
+  }
+  
+  button {
+    transition: all 0.3s ease;
+  }
+  
+.img-home{
+    background: url('src/assets/backgrounds/comunitech-video.mp4');
+}
+

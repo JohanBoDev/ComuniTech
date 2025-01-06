@@ -37,6 +37,17 @@ app.use((req, res, next) => {
         express.json()(req, res, next);
     }
 });
+// Ruta del webhook configurada con `bodyParser.raw`
+app.post(
+    '/webhook/stripe',
+    bodyParser.raw({ type: 'application/json' }), // Procesar el cuerpo como raw buffer
+    (req, res, next) => {
+        console.log("Headers recibidos en el webhook:", req.headers);
+        console.log("Cuerpo recibido antes del controlador:", req.body); // Esto debería ser un Buffer
+        next();
+    },
+    stripeWebhook
+);
 
 // Rutas básicas
 app.get('/', (req, res) => {
@@ -51,12 +62,7 @@ app.get('/cancel', (req, res) => {
     res.send('Pago cancelado');
 });
 
-// Ruta del webhook configurada con `bodyParser.raw`
-app.post(
-    '/webhook/stripe',
-    bodyParser.raw({ type: 'application/json' }), // Procesar el cuerpo como raw buffer
-    stripeWebhook
-);
+
 
 //  rutas principales 
 
