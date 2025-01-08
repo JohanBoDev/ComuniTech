@@ -58,7 +58,7 @@ const stripeWebhook = async (req, res) => {
                 );
 
                 const detalles = carrito.map(item => [
-                    pedido.insertId, item.producto_id, item.cantidad, item.precio
+                    pedido.insertId, item.producto_id, item.cantidad, item.precio, item.nombre, item.imagen_url
                 ]);
 
                 await db.query(
