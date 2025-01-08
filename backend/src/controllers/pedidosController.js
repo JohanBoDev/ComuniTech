@@ -269,32 +269,37 @@ const filtrarPedidos = async (req, res) => {
 
 
 const eliminarPedido = async (req, res) => {
-    const { id } = req.params; // Obtener el ID del pedido de los parámetros de la ruta
-    const usuario_id = req.usuario.id; // ID del usuario autenticado (extraído del token)
-
+    const { pedido_id } = req.params; // Obtener el ID del pedido de los parámetros
+    const usuario_id = req.usuario.id; // ID del usuario autenticado
+  
     try {
-        // Verificar si el pedido pertenece al usuario autenticado
-        const [pedido] = await db.query(
-            `SELECT id FROM pedidos WHERE id = ? AND usuario_id = ?`,
-            [id, usuario_id]
-        );
-
-        if (pedido.length === 0) {
-            return res.status(404).json({ mensaje: 'Pedido no encontrado o no autorizado.' });
-        }
-
-        // Eliminar los detalles del pedido
-        await db.query(`DELETE FROM detalles_pedido WHERE pedido_id = ?`, [id]);
-
-        // Eliminar el pedido
-        await db.query(`DELETE FROM pedidos WHERE id = ?`, [id]);
-
-        res.status(200).json({ mensaje: 'Pedido eliminado correctamente.' });
+      // Verificar si el pedido pertenece al usuario autenticado
+      const [pedido] = await db.query(
+        `SELECT id FROM pedidos WHERE id = ? AND usuario_id = ?`,
+        [pedido_id, usuario_id]
+      );
+  
+      if (pedido.length === 0) {
+        return res
+          .status(404)
+          .json({ mensaje: "Pedido no encontrado o no autorizado." });
+      }
+  
+      // Paso 1: Eliminar los detalles del pedido
+      await db.query(`DELETE FROM detalles_pedido WHERE pedido_id = ?`, [
+        pedido_id,
+      ]);
+  
+      // Paso 2: Eliminar el pedido
+      await db.query(`DELETE FROM pedidos WHERE id = ?`, [pedido_id]);
+  
+      res.status(200).json({ mensaje: "Pedido eliminado correctamente." });
     } catch (error) {
-        console.error('Error al eliminar el pedido:', error);
-        res.status(500).json({ mensaje: 'Error al eliminar el pedido.' });
+      console.error("Error al eliminar el pedido:", error);
+      res.status(500).json({ mensaje: "Error al eliminar el pedido." });
     }
-};
+  };
+  
 
 
 

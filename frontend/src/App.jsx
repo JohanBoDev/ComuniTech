@@ -20,6 +20,7 @@ import AlmacenamientoSeccion from "./pages/storageSeccion";
 import FuentesPoderSeccion from "./pages/seccionFuentePoder";
 import MiPerfil from "./pages/miPerfil";
 import Pago from "./pages/pagos";
+import SelectAddressForPayment from "./components/seleccionarDireccionCompra";
 
 function App() {
   return (
@@ -27,7 +28,6 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/mi-perfil" element={<MiPerfil />} />
           <Route path="/motherboards" element={<MotherboardsSection />} />
           <Route path="/tarjetas-graficas" element={<GPUSection />} />
           <Route path="/procesadores" element={<ProcesadoresSeccion />} />
@@ -42,9 +42,14 @@ function App() {
           <Route path="/restablecer-password" element={<RestablecerPassword />} />
           <Route path="/enviar-correo" element={<EnviarRecuperacion />} />
           <Route path="/resultados" element={<Resultados />} />
-          <Route path="/Pago" element={<Pago />} />
           {/* Rutas protegidas */}
-          <Route path="/carrito" element={<ProtectedRoute element={Cart} />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/carrito" element={<Cart />} />
+            <Route path="/Pago" element={<Pago />} />
+            <Route path="/seleccionar-direccion" element={<SelectAddressForPayment />} />
+            <Route path="/mi-perfil" element={<MiPerfil />} />
+          </Route>
+          
         </Routes>
       </AuthProvider>
     </Router>

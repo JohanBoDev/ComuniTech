@@ -153,6 +153,7 @@ const CategoriaAlmacenamiento = () => {
                     updateMessage={(message) =>
                       updateMessage(product.id_producto, message)
                     }
+                    stock = {product.stock}
                   />
                 </div>
                 {messages[product.id_producto] && (

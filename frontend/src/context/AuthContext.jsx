@@ -5,7 +5,7 @@ export const AuthContext = createContext(); // Named export para AuthContext
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // Para guardar datos del usuario
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   // Cargar token y datos del usuario al iniciar la app
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const storedUser = localStorage.getItem("usuario");
       if (token && storedUser) {
-        const parsedUser = JSON.parse(storedUser); // Asegúrate de que sea un JSON válido
+        const parsedUser = JSON.parse(storedUser);
         setIsLoggedIn(true);
         setUser(parsedUser);
       }
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const login = (token, userData) => {
     if (userData) {
       localStorage.setItem("token", token);
-      localStorage.setItem("usuario", JSON.stringify(userData)); // Guardar datos del usuario en localStorage
+      localStorage.setItem("usuario", JSON.stringify(userData));
       setIsLoggedIn(true);
       setUser(userData);
     } else {
@@ -43,15 +43,30 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("usuario");
     setIsLoggedIn(false);
     setUser(null);
-    navigate("/"); 
+    navigate("/");
+  };
+
+  // Función para verificar si el usuario está autenticado
+  const isUserLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    try {
+      const userData = JSON.parse(localStorage.getItem("usuario"));
+      return !!(token && userData); // Retorna true si el token y los datos del usuario están presentes
+    } catch (error) {
+      console.error("Error verificando el estado de autenticación:", error);
+      return false;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, setUser, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, user, setUser, login, logout, isUserLoggedIn }}
+    >
       {children}
     </AuthContext.Provider>
   );
-  
 };
 
 export const useAuth = () => useContext(AuthContext);
