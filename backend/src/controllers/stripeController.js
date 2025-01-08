@@ -94,19 +94,22 @@ const stripeWebhook = async (req, res) => {
                     to: session.customer_details.email,
                     subject: "Confirmación de tu pedido",
                     html: `
-                        <h1>¡Gracias por tu compra en Comunitech!</h1>
-                        <p>Tu pedido ha sido recibido y está siendo procesado.</p>
-                        <ul>
-                            ${carrito
-                                .map(
-                                    (item) => `
-                                <li>${item.cantidad} x ${item.producto_id} - $${item.precio} cada uno</li>`
-                                )
-                                .join("")}
-                        </ul>
-                        <p>Total: <strong>$${total}</strong></p>
-                        <p>¡Gracias por confiar en nosotros!</p>
-                    `,
+                    <h1>¡Gracias por tu compra en Comunitech!</h1>
+                    <p>Tu pedido ha sido recibido y está siendo procesado.</p>
+                    <ul>
+                        ${carrito
+                            .map(
+                                (item) => `
+                                <li style="margin-bottom: 10px;">
+                                    <img src="${item.imagen_url}" alt="Producto" style="width: 100px; height: 100px; object-fit: cover; margin-right: 10px;" />
+                                    ${item.cantidad} x ${item.producto_id} - $${item.precio} cada uno
+                                </li>`
+                            )
+                            .join("")}
+                    </ul>
+                    <p>Total: <strong>$${total}</strong></p>
+                    <p>¡Gracias por confiar en nosotros!</p>
+                `,
                 };
 
                 await transporter.sendMail(mailOptions);
