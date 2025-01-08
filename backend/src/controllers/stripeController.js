@@ -76,7 +76,7 @@ const stripeWebhook = async (req, res) => {
                         [item.cantidad, item.producto_id]
                     );
                 }
-
+                console.log("Carrito procesado para el correo:", carrito);
                 console.log("Stock actualizado para los productos del pedido.");
 
                 // Configurar el transporte de nodemailer
@@ -114,6 +114,8 @@ const stripeWebhook = async (req, res) => {
 
                 await transporter.sendMail(mailOptions);
                 console.log("Correo de confirmación enviado al usuario:", session.customer_details.email);
+                console.log("Stock actualizado para los productos del pedido.");
+
             } catch (error) {
                 console.error("Error al procesar el pedido:", error.message);
             }
