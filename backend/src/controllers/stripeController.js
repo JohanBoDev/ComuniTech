@@ -97,7 +97,7 @@ const stripeWebhook = async (req, res) => {
                     to: session.customer_details.email,
                     subject: "Confirmación de tu pedido",
                     html: `
-                    <h1>${session.customer_details.email} ¡Gracias por tu compra en Comunitech!</h1>
+                    <h1>${session.customer_details.name} ¡Gracias por tu compra en Comunitech!</h1>
                      <p>Tu pedido ha sido recibido y está siendo procesado.</p>
                       <ul style="list-style-type: none; padding: 0;">
                       ${carrito

@@ -4,24 +4,48 @@ const obtenerPedidos = async (req, res) => {
     const usuario_id = req.usuario.id; // ID del usuario autenticado
 
     try {
-        // Consultar los pedidos del usuario
+        // Obtener la página actual y el límite de resultados
+        const { page = 1, limit = 10 } = req.query;
+        const offset = (page - 1) * limit; // Calcular el desplazamiento
+
+        // Consultar los pedidos paginados del usuario
         const [pedidos] = await db.query(
             `SELECT id AS pedido_id, fecha_pedido, estado, total
              FROM pedidos
+             WHERE usuario_id = ?
+             LIMIT ? OFFSET ?`,
+            [usuario_id, parseInt(limit), parseInt(offset)]
+        );
+
+        // Consultar el total de pedidos para calcular el total de páginas
+        const [totalPedidos] = await db.query(
+            `SELECT COUNT(*) AS total 
+             FROM pedidos 
              WHERE usuario_id = ?`,
             [usuario_id]
         );
 
+        const total = totalPedidos[0].total; // Total de pedidos
+        const totalPaginas = Math.ceil(total / limit); // Total de páginas
+
+        // Validar si no hay pedidos
         if (pedidos.length === 0) {
             return res.status(404).json({ mensaje: 'No se encontraron pedidos para este usuario.' });
         }
 
-        res.status(200).json({ pedidos });
+        // Responder con los datos paginados
+        res.status(200).json({ 
+            pedidos, 
+            paginaActual: parseInt(page), 
+            totalPaginas, 
+            totalPedidos: total 
+        });
     } catch (error) {
         console.error('Error al obtener los pedidos del usuario:', error);
         res.status(500).json({ mensaje: 'Error al obtener los pedidos del usuario.' });
     }
 };
+
 
 const obtenerDetallesPedido = async (req, res) => {
     const usuario_id = req.usuario.id; // ID del usuario autenticado
