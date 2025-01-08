@@ -69,10 +69,11 @@ const obtenerCarritoUsuario = async (req, res) => {
                     p.id_producto, 
                     p.nombre, 
                     c.cantidad, 
-                    p.precio,
+                    p.precio, 
                     p.descripcion, 
-                    (c.cantidad * p.precio) AS subtotal,
-                    p.imagen_url
+                    (c.cantidad * p.precio) AS subtotal, 
+                    p.imagen_url,
+                    p.stock  -- Incluye el stock del producto
              FROM carrito c
              JOIN productos p ON c.producto_id = p.id_producto
              WHERE c.usuario_id = ?`,
@@ -84,7 +85,7 @@ const obtenerCarritoUsuario = async (req, res) => {
             return res.status(200).json({ mensaje: 'No tienes productos en el carrito.' });
         }
 
-        // Devolver los productos si existen
+        // Devolver los productos con el stock incluido
         return res.status(200).json(productos);
     } catch (error) {
         console.error('Error al obtener el carrito:', error);
