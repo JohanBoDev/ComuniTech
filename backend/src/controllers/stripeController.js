@@ -37,7 +37,7 @@ const stripeWebhook = async (req, res) => {
 
             try {
                 const [carrito] = await db.query(
-                    `SELECT c.producto_id, c.cantidad, p.precio
+                    `SELECT c.producto_id, c.cantidad, p.precio, p.nombre, p.imagen_url
                      FROM carrito c
                      JOIN productos p ON c.producto_id = p.id_producto
                      WHERE c.usuario_id = ?`,
@@ -58,7 +58,10 @@ const stripeWebhook = async (req, res) => {
                 );
 
                 const detalles = carrito.map(item => [
-                    pedido.insertId, item.producto_id, item.cantidad, item.precio, item.nombre, item.imagen_url
+                    pedido.insertId, // ID del pedido
+                    item.producto_id, // ID del producto
+                    item.cantidad, // Cantidad comprada
+                    item.precio // Precio unitario
                 ]);
 
                 await db.query(
@@ -101,15 +104,16 @@ const stripeWebhook = async (req, res) => {
                             .map(
                                 (item) => `
                                 <li style="margin-bottom: 10px;">
-                                    <img src="${item.imagen_url}" alt="Producto" style="width: 100px; height: 100px; object-fit: cover; margin-right: 10px;" />
-                                    ${item.cantidad} x ${item.producto_id} - $${item.precio} cada uno
+                                    <img src="${item.imagen_url}" alt="${item.nombre}" style="width: 100px; height: 100px; object-fit: cover; margin-right: 10px;" />
+                                    <strong>${item.nombre}</strong><br />
+                                    ${item.cantidad} x $${item.precio} cada uno
                                 </li>`
                             )
                             .join("")}
                     </ul>
-                    <p>Total: <strong>$${total}</strong></p>
+                    <p>Total: <strong>$${total.toLocaleString("es-CO", { style: "currency", currency: "COP" })}</strong></p>
                     <p>¡Gracias por confiar en nosotros!</p>
-                `,
+                    `,
                 };
 
                 await transporter.sendMail(mailOptions);
