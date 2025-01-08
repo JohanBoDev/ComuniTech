@@ -86,10 +86,10 @@ const stripeWebhook = async (req, res) => {
                 const transporter = nodemailer.createTransport({
                     service: "gmail",
                     auth: {
-                      user: "empresacomunitech@gmail.com", // Correo oficial
-                      pass: process.env.EMAIL_PASSWORD, // Contraseña de aplicación de Gmail
+                        user: "empresacomunitech@gmail.com", // Correo oficial
+                        pass: process.env.EMAIL_PASSWORD, // Contraseña de aplicación de Gmail
                     },
-                  });
+                });
 
                 // Enviar correo de confirmación al cliente
                 const mailOptions = {
@@ -97,23 +97,24 @@ const stripeWebhook = async (req, res) => {
                     to: session.customer_details.email,
                     subject: "Confirmación de tu pedido",
                     html: `
-                    <h1>¡Gracias por tu compra en Comunitech!</h1>
-                    <p>Tu pedido ha sido recibido y está siendo procesado.</p>
-                    <ul>
-                        ${carrito
-                            .map(
-                                (item) => `
-                                <li style="margin-bottom: 10px;">
-                                    <img src="${item.imagen_url}" alt="${item.nombre}" style="width: 100px; height: 100px; object-fit: cover; margin-right: 10px;" />
-                                    <strong>${item.nombre}</strong><br />
-                                    ${item.cantidad} x $${item.precio} cada uno
-                                </li>`
-                            )
-                            .join("")}
-                    </ul>
-                    <p>Total: <strong>$${total.toLocaleString("es-CO", { style: "currency", currency: "COP" })}</strong></p>
-                    <p>¡Gracias por confiar en nosotros!</p>
-                    `,
+                    <h1>${session.customer_details.email} ¡Gracias por tu compra en Comunitech!</h1>
+                     <p>Tu pedido ha sido recibido y está siendo procesado.</p>
+                      <ul style="list-style-type: none; padding: 0;">
+                      ${carrito
+                            .map(item => `
+                       <li style="display: flex; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                       <img src="${item.imagen_url}" alt="${item.nombre}" 
+                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;" />
+                       <div>
+                        <strong style="color: #333;">${item.nombre}</strong><br />
+                        <span style="font-size: 14px; color: #555;">${item.cantidad} x $${item.precio.toLocaleString("es-CO")}</span>
+                       </div>
+                      </li>
+              `).join("")}
+              </ul>
+                   <p style="color: #333; font-size: 16px;">Total: <strong style="color: #5A2D82;">$${total.toLocaleString("es-CO")}</strong></p>
+                   <p style="color: #555;">¡Gracias por confiar en nosotros!</p>
+    `,
                 };
 
                 await transporter.sendMail(mailOptions);
