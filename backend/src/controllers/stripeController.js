@@ -28,15 +28,18 @@ const stripeWebhook = async (req, res) => {
     switch (event.type) {
         case 'checkout.session.completed':
             const session = event.data.object;
+
+            // Recuperar usuario_id y direccion_id desde la metadata
             const usuario_id = session.metadata?.usuario_id;
             const direccion_id = session.metadata?.direccion_id;
 
-            if (!usuario_id) {
-                console.error("Error: No se encontró 'usuario_id' en la metadata del evento.");
+            if (!usuario_id || !direccion_id) {
+                console.error("Error: No se encontraron 'usuario_id' o 'direccion_id' en la metadata del evento.");
                 break;
             }
 
             try {
+                // Obtener los datos del carrito del usuario
                 const [carrito] = await db.query(
                     `SELECT c.producto_id, c.cantidad, p.precio, p.nombre, p.imagen_url
                      FROM carrito c
@@ -50,14 +53,17 @@ const stripeWebhook = async (req, res) => {
                     break;
                 }
 
+                // Calcular el total del pedido
                 const total = carrito.reduce((acc, item) => acc + item.cantidad * item.precio, 0);
 
+                // Crear el pedido en la base de datos
                 const [pedido] = await db.query(
                     `INSERT INTO pedidos (usuario_id, fecha_pedido, estado, total, direccion_id)
                      VALUES (?, NOW(), 'Pendiente', ?, ?)`,
                     [usuario_id, total, direccion_id]
                 );
 
+                // Insertar los detalles del pedido
                 const detalles = carrito.map(item => [
                     pedido.insertId, // ID del pedido
                     item.producto_id, // ID del producto
@@ -71,6 +77,7 @@ const stripeWebhook = async (req, res) => {
                     [detalles]
                 );
 
+                // Limpiar el carrito del usuario
                 await db.query(`DELETE FROM carrito WHERE usuario_id = ?`, [usuario_id]);
 
                 // Resta el stock de los productos
@@ -80,7 +87,8 @@ const stripeWebhook = async (req, res) => {
                         [item.cantidad, item.producto_id]
                     );
                 }
-                console.log("Carrito procesado para el correo:", carrito);
+
+                console.log("Carrito procesado con éxito.");
                 console.log("Stock actualizado para los productos del pedido.");
 
                 // Configurar el transporte de nodemailer
@@ -98,30 +106,27 @@ const stripeWebhook = async (req, res) => {
                     to: session.customer_details.email,
                     subject: "Confirmación de tu pedido",
                     html: `
-                    <h1>${session.customer_details.name} ¡Gracias por tu compra en Comunitech!</h1>
-                     <p>Tu pedido ha sido recibido y está siendo procesado.</p>
-                      <ul style="list-style-type: none; padding: 0;">
-                      ${carrito
-                            .map(item => `
-                       <li style="display: flex; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-                       <img src="${item.imagen_url}" alt="${item.nombre}" 
-                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;" />
-                       <div>
-                        <strong style="color: #333;">${item.nombre}</strong><br />
-                        <span style="font-size: 14px; color: #555;">${item.cantidad} x $${item.precio.toLocaleString("es-CO")}</span>
-                       </div>
-                      </li>
-              `).join("")}
-              </ul>
-                   <p style="color: #333; font-size: 16px;">Total: <strong style="color: #5A2D82;">$${total.toLocaleString("es-CO")}</strong></p>
-                   <p style="color: #555;">¡Gracias por confiar en nosotros!</p>
-    `,
+                        <h1>${session.customer_details.name}, ¡Gracias por tu compra en Comunitech!</h1>
+                        <p>Tu pedido ha sido recibido y está siendo procesado.</p>
+                        <ul style="list-style-type: none; padding: 0;">
+                        ${carrito.map(item => `
+                            <li style="display: flex; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                                <img src="${item.imagen_url}" alt="${item.nombre}" 
+                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;" />
+                                <div>
+                                    <strong>${item.nombre}</strong><br />
+                                    <span>${item.cantidad} x $${item.precio.toLocaleString("es-CO")}</span>
+                                </div>
+                            </li>
+                        `).join("")}
+                        </ul>
+                        <p><strong>Total: $${total.toLocaleString("es-CO")}</strong></p>
+                        <p>¡Gracias por confiar en nosotros!</p>
+                    `,
                 };
 
                 await transporter.sendMail(mailOptions);
                 console.log("Correo de confirmación enviado al usuario:", session.customer_details.email);
-                console.log("Stock actualizado para los productos del pedido.");
-
             } catch (error) {
                 console.error("Error al procesar el pedido:", error.message);
             }
@@ -141,6 +146,5 @@ const stripeWebhook = async (req, res) => {
 
     res.status(200).json({ received: true });
 };
-
 
 module.exports = stripeWebhook;
