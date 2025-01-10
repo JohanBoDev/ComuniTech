@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 // Crear una sesión de Stripe Checkout
 const crearCheckoutSession = async (req, res) => {
-    const { usuario_id } = req.body; // Recoger el ID del usuario
+    const { usuario_id, direccion_id } = req.body; // Recoger usuario y dirección
 
     try {
         // Obtener los productos del carrito del usuario
@@ -38,10 +38,11 @@ const crearCheckoutSession = async (req, res) => {
             payment_method_types: ['card'], // Métodos de pago admitidos
             line_items,
             mode: 'payment', // Modo de pago completo
-            cancel_url : 'http://localhost:5173/carrito', // URL de cancelación
-            success_url : 'http://localhost:5173/', // URL de éxito
+            cancel_url: 'http://localhost:5173/carrito', // URL de cancelación
+            success_url: 'http://localhost:5173/', // URL de éxito
             metadata: {
                 usuario_id: usuario_id, // Pasar el ID del usuario como metadato
+                direccion_id: direccion_id, // Pasar el ID de la dirección como metadato
             },
         });
 
@@ -52,5 +53,6 @@ const crearCheckoutSession = async (req, res) => {
         res.status(500).json({ mensaje: 'Error al crear la sesión de checkout.', error });
     }
 };
+
 
 module.exports = { crearCheckoutSession };
