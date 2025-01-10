@@ -29,6 +29,7 @@ const stripeWebhook = async (req, res) => {
         case 'checkout.session.completed':
             const session = event.data.object;
             const usuario_id = session.metadata?.usuario_id;
+            const direccion_id = session.metadata?.direccion_id;
 
             if (!usuario_id) {
                 console.error("Error: No se encontró 'usuario_id' en la metadata del evento.");
@@ -54,7 +55,7 @@ const stripeWebhook = async (req, res) => {
                 const [pedido] = await db.query(
                     `INSERT INTO pedidos (usuario_id, fecha_pedido, estado, total, direccion_id)
                      VALUES (?, NOW(), 'Pendiente', ?, ?)`,
-                    [usuario_id, total, session.metadata.direccion_id]
+                    [usuario_id, total, direccion_id]
                 );
 
                 const detalles = carrito.map(item => [
