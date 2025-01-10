@@ -40,22 +40,6 @@ const obtenerProductosPaginados = async (req, res) => {
     }
 };
 
-// obtener un producto al azar
-const obtenerProductoRandom = async (req, res) => {
-    try {
-      const [productos] = await db.query('SELECT * FROM productos ORDER BY RAND() LIMIT 1');
-  
-      if (productos.length === 0) {
-        return res.status(404).json({ mensaje: 'No se encontraron productos.' });
-      }
-  
-      res.json(productos[0]);
-    } catch (error) {
-      console.error('Error en la consulta SQL:', error);
-      res.status(500).json({ mensaje: 'Error al obtener un producto aleatorio.' });
-    }
-  };
-
 // Obtener un producto por ID
 const obtenerProductoPorId = async (req, res) => {
     const { id } = req.params;
@@ -224,6 +208,93 @@ const actualizarStockProducto = async (req, res) => {
     }
 };
 
+// Agregar producto a favoritos
+const agregarProductoFavorito = async (req, res) => {
+    const { id } = req.params; // ID del producto
+    const { id_usuario } = req.body; // ID del usuario
+
+    if (!id || !id_usuario) {
+        return res.status(400).json({ mensaje: 'El id del producto y el id del usuario son requeridos.' });
+    }
+
+    try {
+        // Verificar si el producto ya está en favoritos para el usuario
+        const [favoritos] = await db.query(
+            'SELECT * FROM productos_favoritos WHERE id_producto = ? AND id_usuario = ?',
+            [id, id_usuario]
+        );
+
+        if (favoritos.length > 0) {
+            return res.status(409).json({ mensaje: 'El producto ya está en favoritos.' });
+        }
+
+        // Insertar el producto como favorito
+        const [resultado] = await db.query(
+            'INSERT INTO productos_favoritos (id_producto, id_usuario, creado_el) VALUES (?, ?, NOW())',
+            [id, id_usuario]
+        );
+
+        if (resultado.affectedRows > 0) {
+            res.status(201).json({ mensaje: 'Producto agregado a favoritos correctamente.' });
+        } else {
+            res.status(500).json({ mensaje: 'No se pudo agregar el producto a favoritos.' });
+        }
+    } catch (error) {
+        console.error('Error al agregar el producto a favoritos:', error);
+        res.status(500).json({ mensaje: 'Error interno al agregar el producto a favoritos.' });
+    }
+};
+
+// Eliminar producto de favoritos
+const eliminarProductoFavorito = async (req, res) => {
+    const { id } = req.params; // ID del producto
+    const { id_usuario } = req.body; // ID del usuario
+
+    if (!id || !id_usuario) {
+        return res.status(400).json({ mensaje: 'El id del producto y el id del usuario son requeridos.' });
+    }
+
+    try {
+        // Eliminar el producto de favoritos
+        const [resultado] = await db.query(
+            'DELETE FROM productos_favoritos WHERE id_producto = ? AND id_usuario = ?',
+            [id, id_usuario]
+        );
+
+        if (resultado.affectedRows > 0) {
+            res.json({ mensaje: 'Producto eliminado de favoritos correctamente.' });
+        } else {
+            res.status(404).json({ mensaje: 'Producto no encontrado en favoritos.' });
+        }
+    } catch (error) {
+        console.error('Error al eliminar el producto de favoritos:', error);
+        res.status(500).json({ mensaje: 'Error interno al eliminar el producto de favoritos.' });
+    }
+}
+
+
+const obtenerProductosFavoritos = async (req, res) => {
+    const { id_usuario } = req.params;
+
+    if (!id_usuario) {
+        return res.status(400).json({ mensaje: 'El id del usuario es requerido.' });
+    }
+
+    try {
+        // Obtener los productos favoritos del usuario
+        const [productos] = await db.query(
+            'SELECT p.* FROM productos p JOIN productos_favoritos f ON p.id_producto = f.id_producto WHERE f.id_usuario = ?',
+            [id_usuario]
+        );
+
+        res.json(productos);
+    } catch (error) {
+        console.error('Error al obtener los productos favoritos:', error);
+        res.status(500).json({ mensaje: 'Error interno al obtener los productos favoritos.' });
+    }
+};
+
+
 
   
 
@@ -238,4 +309,6 @@ module.exports = { obtenerTodosProductos,
     eliminarProducto, 
     obtenerProductosPorCategoria,
     actualizarStockProducto,
-    obtenerProductoRandom};
+    agregarProductoFavorito,
+    eliminarProductoFavorito,
+    obtenerProductosFavoritos};
