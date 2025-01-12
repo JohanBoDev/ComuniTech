@@ -50,7 +50,7 @@ ComuniTech es una plataforma de comercio electrónico diseñada para que los usu
 - **Hosting:** Render o Railway para manejar la lógica del servidor y las conexiones a la base de datos.
 
 ### Base de Datos
-- **MySQL:** Desplegado en servicios como PlanetScale o Railway.
+- **MySQL:** Desplegado en Railway.
 
 ## Instalación Local
 
