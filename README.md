@@ -26,10 +26,10 @@ ComuniTech es una plataforma de comercio electrónico diseñada para que los usu
 - **Framework:** Node.js con Express.js.
 - **Base de Datos:** MySQL para una gestión estructurada de datos.
 - **Autenticación:** JWT (JSON Web Tokens) para autenticación y autorización segura.
-- **Hosting:** Render o Railway para un backend robusto y escalable.
+- **Hosting:** Render y Railway para un backend robusto y escalable.
 
 ### Extras
-- **Pasarela de Pago Simulada:** Flujo de pago controlado internamente con tokens para validar transacciones.
+- **Pasarela de Pago Simulada Stripe:** Flujo de pago controlado internamente con tokens para validar transacciones.
 - **Variables de Entorno:** Configuraciones seguras con dotenv.
 
 ## Flujo del Usuario
