@@ -156,7 +156,7 @@ const actualizarProducto = async (req, res) => {
     const { nombre, precio, descripcion, stock, imagen_url } = req.body;
 
     try {
-        const [resultado] = await db.query('UPDATE productos SET nombre = ?, precio = ?, descripcion = ?, stock = ?, imagen_url = ?, WHERE id_producto = ?', [nombre, precio, descripcion, stock,imagen_url, id]);
+        const [resultado] = await db.query('UPDATE productos SET nombre = ?, precio = ?, descripcion = ?, stock = ?, imagen_url = ? WHERE id_producto = ?', [nombre, precio, descripcion, stock,imagen_url, id]);
         if (resultado.affectedRows === 0) {
             return res.status(404).json({ mensaje: 'Producto no encontrado.' });
         }
