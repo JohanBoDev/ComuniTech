@@ -153,10 +153,10 @@ const crearProducto = async (req, res) => {
 // Actualizar un producto (solo admin)
 const actualizarProducto = async (req, res) => {
     const { id } = req.params;
-    const { nombre, precio, descripcion, stock } = req.body;
+    const { nombre, precio, descripcion, stock, imagen_url } = req.body;
 
     try {
-        const [resultado] = await db.query('UPDATE productos SET nombre = ?, precio = ?, descripcion = ?, stock = ? WHERE id_producto = ?', [nombre, precio, descripcion, stock, id]);
+        const [resultado] = await db.query('UPDATE productos SET nombre = ?, precio = ?, descripcion = ?, stock = ?, imagen_url = ?, WHERE id_producto = ?', [nombre, precio, descripcion, stock,imagen_url, id]);
         if (resultado.affectedRows === 0) {
             return res.status(404).json({ mensaje: 'Producto no encontrado.' });
         }
@@ -181,6 +181,7 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
+// Actualizar el stock de un producto
 const actualizarStockProducto = async (req, res) => {
     const { id } = req.params; // ID del producto
     const { stock } = req.body; // Nuevo stock enviado en el cuerpo de la solicitud

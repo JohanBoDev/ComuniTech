@@ -308,11 +308,54 @@ const editarUsuario = async (req, res) => {
   }
 };
 
+//solo admin
+// obtener todos los usuarios
+
+const obtenerUsuarios = async (req, res) => {
+  try {
+    const [usuarios] = await db.query('SELECT * FROM usuarios');
+    res.json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+    res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+};
+
+// crear usuario 
+const crearUsuario = async (req, res) => {
+  const { nombre, email, contraseña, es_admin } = req.body;
+  try {
+    if (!nombre || !email || !contraseña) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
+
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
+
+    const [result] = await db.query(
+      'INSERT INTO usuarios (nombre, email, contraseña, es_admin) VALUES (?, ?, ?, ?)',
+      [nombre, email, hashedPassword, es_admin]
+    );
+
+    res.status(201).json({
+      message: 'Usuario creado correctamente',
+      usuario: {
+        id_usuario: result.insertId,
+        nombre,
+        email,
+        es_admin,
+      },
+    });
+  } catch (error) {
+    console.error('Error al crear el usuario:', error);
+    res.status(500).json({ message: 'Error al crear el usuario' });
+  }
+}
+
+  
 
 
 
 
-
-module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId,editarUsuario, subirFotoPerfil, upload };
+module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId,editarUsuario, subirFotoPerfil,obtenerUsuarios,crearUsuario, upload };
 
 
