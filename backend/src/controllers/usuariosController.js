@@ -309,8 +309,8 @@ const editarUsuario = async (req, res) => {
 };
 
 //solo admin
-// obtener todos los usuarios
 
+// obtener todos los usuarios
 const obtenerUsuarios = async (req, res) => {
   try {
     const [usuarios] = await db.query('SELECT * FROM usuarios');
@@ -349,13 +349,67 @@ const crearUsuario = async (req, res) => {
     console.error('Error al crear el usuario:', error);
     res.status(500).json({ message: 'Error al crear el usuario' });
   }
-}
+};
 
-  
+//Editar Usuario
+const editarUsuarioAdmin = async (req, res) => {
+  const { id_usuario } = req.params;
+  const { nombre, email, contraseña, es_admin } = req.body;
+  try {
+    if (!nombre || !email || !contraseña) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
+
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
+
+    const [result] = await db.query(
+      'UPDATE usuarios SET nombre = ?, email = ?, contraseña = ?, es_admin = ? WHERE id_usuario = ?',
+      [nombre, email, hashedPassword, es_admin, id_usuario]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.json({ message: 'Usuario actualizado correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
+    res.status(500).json({ message: 'Error al actualizar el usuario' });
+  }
+};
+
+//eliminar usuario
+const eliminarUsuario = async (req, res) => {
+  const { id_usuario } = req.params;
+  try {
+    const [result] = await db.query('DELETE FROM usuarios WHERE id_usuario = ?', [id_usuario]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.json({ message: 'Usuario eliminado correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar el usuario:', error);
+    res.status(500).json({ message: 'Error al eliminar el usuario' });
+  }
+};
 
 
 
 
-module.exports = { registrarUsuario, iniciarSesion, EnviarCorreoRecuperacion, RestablecerPassword,obtenerUsuarioPorId,editarUsuario, subirFotoPerfil,obtenerUsuarios,crearUsuario, upload };
+
+module.exports = {
+  registrarUsuario,
+  iniciarSesion,
+  EnviarCorreoRecuperacion,
+  RestablecerPassword,
+  obtenerUsuarioPorId,
+  editarUsuario,
+  subirFotoPerfil,
+  obtenerUsuarios,
+  crearUsuario,
+  editarUsuarioAdmin,
+  eliminarUsuario,
+   upload
+};
 
 
