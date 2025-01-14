@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { obtenerTodosProductos, obtenerProductosPaginados, crearProducto, actualizarProducto, eliminarProducto, obtenerProductoPorId, obtenerProductoPorNombre, obtenerProductosPorCategoria, actualizarStockProducto, agregarProductoFavorito, obtenerProductosFavoritos, eliminarProductoFavorito } = require('../controllers/productosController');
+const { obtenerTodosProductos, obtenerCategorias, obtenerProductosPaginados, crearProducto, actualizarProducto, eliminarProducto, obtenerProductoPorId, obtenerProductoPorNombre, obtenerProductosPorCategoria, actualizarStockProducto, agregarProductoFavorito, obtenerProductosFavoritos, eliminarProductoFavorito } = require('../controllers/productosController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
 
 // Rutas del CRUD de productos
@@ -43,6 +43,9 @@ router.delete('/eliminarProducto/:id', verificarToken, verificarRol([1]), elimin
 
 // Crear producto (solo admin)
 router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
+
+// Obtener todas las categorías
+router.get('/categorias', obtenerCategorias);
 
 module.exports = router;
 

@@ -295,6 +295,29 @@ const obtenerProductosFavoritos = async (req, res) => {
     }
 };
 
+//obtener categorias
+const obtenerCategorias = async (req, res) => {
+    try {
+      // Consulta a la base de datos para obtener todas las categorías
+      const [categorias] = await db.query('SELECT id_categoria, nombre, descripcion FROM categorias');
+  
+      // Log para verificar las categorías obtenidas
+      console.log('Categorías obtenidas:', categorias);
+  
+      // Enviar las categorías como respuesta
+      res.status(200).json(categorias);
+    } catch (error) {
+      // Log del error si algo falla
+      console.error('Error al obtener las categorías:', error);
+  
+      // Respuesta de error al cliente
+      res.status(500).json({ error: 'Error al obtener las categorías.' });
+    }
+  };
+  
+  module.exports = { getCategorias };
+  
+
 
 
   
@@ -312,4 +335,5 @@ module.exports = { obtenerTodosProductos,
     actualizarStockProducto,
     agregarProductoFavorito,
     eliminarProductoFavorito,
-    obtenerProductosFavoritos};
+    obtenerProductosFavoritos,
+    obtenerCategorias};
