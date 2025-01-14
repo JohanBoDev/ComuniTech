@@ -9,6 +9,9 @@ const { verificarToken, verificarRol } = require('../middlewares/authMiddleware'
 // Obtener todos los productos
 router.get('/todos', obtenerTodosProductos);
 
+// Obtener todas las categorías
+router.get('/obtenerCategorias', obtenerCategorias);
+
 router.get('/paginados', obtenerProductosPaginados);
 
 // obtener productos por nombre
@@ -43,9 +46,6 @@ router.delete('/eliminarProducto/:id', verificarToken, verificarRol([1]), elimin
 
 // Crear producto (solo admin)
 router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
-
-// Obtener todas las categorías
-router.get('/categorias', obtenerCategorias);
 
 module.exports = router;
 
