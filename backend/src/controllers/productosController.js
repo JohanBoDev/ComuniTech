@@ -314,15 +314,6 @@ const obtenerCategorias = async (req, res) => {
       res.status(500).json({ error: 'Error al obtener las categorías.' });
     }
   };
-  
-  module.exports = { getCategorias };
-  
-
-
-
-  
-
-
 
 module.exports = { obtenerTodosProductos,
     obtenerProductosPaginados,
