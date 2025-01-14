@@ -5,48 +5,23 @@ const { verificarToken, verificarRol } = require('../middlewares/authMiddleware'
 
 // Rutas del CRUD de productos
 
-
-// Obtener todos los productos
-router.get('/todos', obtenerTodosProductos);
-
-// Obtener todas las categorías
-router.get('/obtenerCategorias', obtenerCategorias);
-
-router.get('/paginados', obtenerProductosPaginados);
-
-// obtener productos por nombre
-router.get('/nombre/:nombre', obtenerProductoPorNombre);
-
-// obtener productos por categoria
-router.get('/categoria/:nombreCategoria', obtenerProductosPorCategoria);
-
-// Obtener un producto por ID
-router.get('/:id',  obtenerProductoPorId);
-
-// Agregar producto a favoritos
-router.post('/agregarFavorito/:id', verificarToken, agregarProductoFavorito);
-
-// Obtener productos favoritos
-router.get('/favoritos/:id_usuario', verificarToken, obtenerProductosFavoritos);
-
-// Eliminar producto de favoritos
-router.delete('/eliminarFavorito/:id', verificarToken, eliminarProductoFavorito);
-
-
-//administrador
-
-// Actualizar el stock producto (solo admin)
+// ADMINISTRADOR
+router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
 router.put('/actualizarStockProducto/:id', verificarToken, verificarRol([1]), actualizarStockProducto);
-
-// Actualizar producto (solo admin)
 router.put('/actualizarProducto/:id', verificarToken, verificarRol([1]), actualizarProducto);
-
-// Eliminar producto (solo admin)
 router.delete('/eliminarProducto/:id', verificarToken, verificarRol([1]), eliminarProducto);
 
-// Crear producto (solo admin)
-router.post('/crearProducto', verificarToken, verificarRol([1]), crearProducto);
+// PRODUCTOS
+router.get('/todos', obtenerTodosProductos);
+router.get('/obtenerCategorias', obtenerCategorias);
+router.get('/paginados', obtenerProductosPaginados);
+router.get('/nombre/:nombre', obtenerProductoPorNombre);
+router.get('/categoria/:nombreCategoria', obtenerProductosPorCategoria);
+router.get('/:id', obtenerProductoPorId);
+
+// FAVORITOS
+router.post('/agregarFavorito/:id', verificarToken, agregarProductoFavorito);
+router.get('/favoritos/:id_usuario', verificarToken, obtenerProductosFavoritos);
+router.delete('/eliminarFavorito/:id', verificarToken, eliminarProductoFavorito);
 
 module.exports = router;
-
-
