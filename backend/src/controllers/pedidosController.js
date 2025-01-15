@@ -185,11 +185,12 @@ const obtenerDetallesPedidoAdmin = async (req, res) => {
             return res.status(404).json({ mensaje: 'El pedido no existe.' });
         }
 
-        // Obtener los productos del pedido
+        // Obtener los productos del pedido, incluyendo la imagen_url
         const [detalles] = await db.query(
             `SELECT 
                 dp.producto_id,
                 p.nombre AS producto_nombre,
+                p.imagen_url, -- Campo adicional para la imagen
                 dp.cantidad,
                 dp.precio_unitario
              FROM detalles_pedido dp
@@ -207,6 +208,7 @@ const obtenerDetallesPedidoAdmin = async (req, res) => {
         res.status(500).json({ mensaje: 'Error al obtener los detalles del pedido.' });
     }
 };
+
 
 const filtrarPedidos = async (req, res) => {
     const { estado, usuario_id, fecha_inicio, fecha_fin } = req.query;
