@@ -355,17 +355,23 @@ const crearUsuario = async (req, res) => {
 const editarUsuarioAdmin = async (req, res) => {
   const { id_usuario } = req.params;
   const { nombre, email, contraseña, es_admin } = req.body;
+
   try {
-    if (!nombre || !email || !contraseña) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    if (!nombre || !email) {
+      return res.status(400).json({ message: 'Nombre y email son obligatorios' });
     }
 
-    const hashedPassword = await bcrypt.hash(contraseña, 10);
+    let query = 'UPDATE usuarios SET nombre = ?, email = ?, es_admin = ? WHERE id_usuario = ?';
+    const queryParams = [nombre, email, es_admin, id_usuario];
 
-    const [result] = await db.query(
-      'UPDATE usuarios SET nombre = ?, email = ?, contraseña = ?, es_admin = ? WHERE id_usuario = ?',
-      [nombre, email, hashedPassword, es_admin, id_usuario]
-    );
+    // Si se proporciona una contraseña, la encriptamos y la incluimos en la consulta
+    if (contraseña && contraseña.trim() !== '') {
+      const hashedPassword = await bcrypt.hash(contraseña, 10);
+      query = 'UPDATE usuarios SET nombre = ?, email = ?, contraseña = ?, es_admin = ? WHERE id_usuario = ?';
+      queryParams.splice(2, 0, hashedPassword); // Inserta hashedPassword en la posición correcta
+    }
+
+    const [result] = await db.query(query, queryParams);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -377,6 +383,7 @@ const editarUsuarioAdmin = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar el usuario' });
   }
 };
+
 
 //eliminar usuario
 const eliminarUsuario = async (req, res) => {
