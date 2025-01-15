@@ -3,6 +3,7 @@ import useFetchProductsByCategory from "../hooks/useFetchProductsByCategory";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShoppingCart, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import AddToCartButton from "../components/botonAgregarCarrito";
+import { MagicMotion } from "react-magic-motion";
 
 const CategoriaProcesadores = () => {
   const { products: procesadores, loading, error } = useFetchProductsByCategory("procesador");
@@ -102,10 +103,12 @@ const CategoriaProcesadores = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8 p-10">
         {filteredProcesadores.length > 0 ? (
           filteredProcesadores.map((product) => (
+            
             <div
               key={product.id_producto}
               className="bg-gray-100 dark:bg-black text-gray-900 dark:text-white rounded-lg shadow-md overflow-hidden"
             >
+               
               <div className="relative">
                 <img
                   src={product.imagen_url}
@@ -130,7 +133,7 @@ const CategoriaProcesadores = () => {
                   <FontAwesomeIcon icon={faHeart} />
                 </button>
               </div>
-
+              <MagicMotion>
               <div className="p-4">
                 <h3 className="text-base font-semibold truncate">
                   {product.nombre}
@@ -163,8 +166,9 @@ const CategoriaProcesadores = () => {
                     {messages[product.id_producto].text}
                   </p>
                 )}
-              </div>
+              </div> </MagicMotion>
             </div>
+           
           ))
         ) : (
           <div className="col-span-full text-center text-gray-500 flex flex-col items-center gap-4">

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import AddToCartButton from "./botonAgregarCarrito";
 import useProductosPaginados from "../hooks/useProductosPaginados";
+import AddToFavoritesButton from "./botonAgregarProductoFavorito";
 
 export default function Resultados() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,7 +56,7 @@ export default function Resultados() {
 
       {loading && <p className="text-center">Cargando productos...</p>}
       {error && <p className="text-center text-red-500">Error: {error}</p>}
-
+    
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8 p-10">
         {productos.length > 0 ? (
           productos.map((product) => (
@@ -76,9 +77,7 @@ export default function Resultados() {
                 >
                   {product.stock > 0 ? "Disponible" : "Agotado"}
                 </div>
-                <button className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition">
-                  <FontAwesomeIcon icon={faHeart} />
-                </button>
+                <AddToFavoritesButton id_producto={product.id_producto} />
               </div>
 
               <div className="p-4">
@@ -123,7 +122,7 @@ export default function Resultados() {
           </p>
         )}
       </div>
-
+      
       <div className="flex justify-center mt-8">
         <button
           onClick={() => irAPagina(paginaActual - 1)}

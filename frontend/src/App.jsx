@@ -21,6 +21,10 @@ import FuentesPoderSeccion from "./pages/seccionFuentePoder";
 import MiPerfil from "./pages/miPerfil";
 import Pago from "./pages/pagos";
 import SelectAddressForPayment from "./components/seleccionarDireccionCompra";
+import DashboardAdmin from "./pages/dashboardAdmin";
+import AdministrarProductos from "./pages/gestionarProductos";
+import GestionarUsuarios from "./pages/gestionarUsuarios";
+import PaginasPedidos from "./pages/gestionarPedidos";
 
 function App() {
   return (
@@ -48,6 +52,10 @@ function App() {
             <Route path="/Pago" element={<Pago />} />
             <Route path="/seleccionar-direccion" element={<SelectAddressForPayment />} />
             <Route path="/mi-perfil" element={<MiPerfil />} />
+            <Route path="/dashboard-admin" element={<DashboardAdmin />} />
+            <Route path="/administrarProductos" element={<AdministrarProductos />} />
+            <Route path="/gestionarUsuarios" element={<GestionarUsuarios />} />
+            <Route path="/administrarPedidos" element={<PaginasPedidos/>} />
           </Route>
           
         </Routes>

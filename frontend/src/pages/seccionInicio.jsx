@@ -41,9 +41,7 @@ const HomeSection = () => {
           <button className="py-3 px-6 md:px-8 bg-gradient-to-r from-black/70 to-black/90 text-white font-texto font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 dark:drop-shadow-[0_4px_6px_rgba(255,255,255,0.2)]">
             Explorar Productos
           </button>
-          <button className="py-3 px-6 md:px-8 bg-gradient-to-r from-black/70 to-black/90 text-white font-texto font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 dark:drop-shadow-[0_4px_6px_rgba(255,255,255,0.2)]">
-            Ver Ofertas
-          </button>
+
         </div>
       </div>
     </section>

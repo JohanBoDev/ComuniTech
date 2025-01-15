@@ -301,6 +301,34 @@ const eliminarPedido = async (req, res) => {
       res.status(500).json({ mensaje: "Error al eliminar el pedido." });
     }
   };
+
+  const eliminarPedidoAdmin = async (req, res) => {
+    const { pedido_id } = req.params; // Obtener el ID del pedido
+  
+    try {
+      // Verificar si el pedido existe
+      const [pedido] = await db.query(`SELECT id FROM pedidos WHERE id = ?`, [
+        pedido_id,
+      ]);
+  
+      if (pedido.length === 0) {
+        return res.status(404).json({ mensaje: "Pedido no encontrado." });
+      }
+  
+      // Paso 1: Eliminar los detalles del pedido
+      await db.query(`DELETE FROM detalles_pedido WHERE pedido_id = ?`, [
+        pedido_id,
+      ]);
+  
+      // Paso 2: Eliminar el pedido
+      await db.query(`DELETE FROM pedidos WHERE id = ?`, [pedido_id]);
+  
+      res.status(200).json({ mensaje: "Pedido eliminado correctamente." });
+    } catch (error) {
+      console.error("Error al eliminar el pedido:", error);
+      res.status(500).json({ mensaje: "Error al eliminar el pedido." });
+    }
+  };
   
 
 
@@ -314,5 +342,6 @@ module.exports = {
     obtenerTodosLosPedidos,
     obtenerDetallesPedidoAdmin,
     filtrarPedidos,
-    eliminarPedido
+    eliminarPedido,
+    eliminarPedidoAdmin,
 };

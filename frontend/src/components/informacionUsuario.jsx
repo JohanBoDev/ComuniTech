@@ -122,16 +122,8 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="bg-gray-100 dark:bg-[#232323] dark:text-white ">
-      <div className="relative bg-gray-200 dark:bg-[gray-800] h-72 w-full">
-        <img
-          src={bannerPerfil}
-          alt="Cover"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      <div className="max-w-4xl px-6 -mt-12 mx-auto">
+    <div className="bg-gray-100 mt-10 dark:bg-[#232323] dark:text-white ">
+      <div className="max-w-4xl px-6 -mt-12 mx-auto p-5">
         <div className="bg-white dark:bg-[#1A1A1A] relative rounded-lg shadow-md p-6 flex flex-col lg:flex-row items-center gap-x-5">
           <div className="relative">
             <img

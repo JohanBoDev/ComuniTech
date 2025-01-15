@@ -114,23 +114,30 @@ const updateQuantity = async (carrito_id, quantity) => {
   const fetchSelectedAddress = async () => {
     const idDireccion = localStorage.getItem("selectedAddress");
     if (!idDireccion) return;
-
+  
     try {
       const response = await axios.get(
-        `https://comunitech.onrender.com/api/direcciones/obtenerDireccion/${idDireccion}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
+        `https://comunitech.onrender.com/api/direcciones/obtenerDireccion/${idDireccion}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
-
+  
       if (response.status === 200) {
         setSelectedAddress(response.data);
+      } else {
+        console.error("Error al obtener la dirección: ", response.data.message);
+        localStorage.removeItem("selectedAddress"); // Limpiar si no es válida
       }
     } catch (error) {
       console.error("Error al obtener la dirección seleccionada:", error);
+      localStorage.removeItem("selectedAddress"); // Limpiar en caso de error
+      setSelectedAddress(null);
     }
   };
+  
 
 
   useEffect(() => {

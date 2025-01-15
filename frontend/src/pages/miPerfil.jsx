@@ -3,8 +3,10 @@ import UserAddresses from "../layouts/direccionDeUsuario";
 import MobileHeader from "../layouts/mobileHeader";
 import Header from "../layouts/desktopHeader";
 import PedidosList from "../layouts/listaDePedidos";
+import FavoritosList from "../layouts/listaProductosFavoritos";
 import Footer from "../layouts/footer";
 
+import { Link } from "react-router-dom";
 const MiPerfil = () => {
   return (
     <div className="flex flex-col bg-gray-100 dark:bg-black text-gray-800 dark:text-white">
@@ -21,10 +23,16 @@ const MiPerfil = () => {
       {/* Contenido principal */}
       <main className="flex-grow container mx-auto p-4 md:p-8">
         <div className="bg-white dark:bg-black shadow-md rounded-lg p-6 md:p-10">
-          <h1 className="text-3xl font-bold mb-6 text-center">Mi Perfil</h1>
+          <h1 className="text-3xl font-bold mb-20 text-center">Mi Perfil</h1>
           <UserProfile />
           <UserAddresses />
           <PedidosList />
+          <FavoritosList />
+          <button>
+            <Link to="/dashboard-admin">
+            Ir al panel de administrador
+            </Link>
+          </button>
         </div>
       </main>
 

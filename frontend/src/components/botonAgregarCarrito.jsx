@@ -73,13 +73,19 @@ const AddToCartButton = ({ productId, updateMessage, stock }) => {
           }}
           onBlur={handleBlur}
           className="w-16 p-1 text-center border rounded-md bg-gray-50 dark:bg-gray-800 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-          min={1}
+          min={0}
           max={stock}
+          disabled={stock === 0} // Deshabilitar input si no hay stock
         />
         <button
           onClick={handleAddToCart}
-          disabled={loading}
-          className="p-2 bg-gray-300 dark:bg-gray-700 rounded-full hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+          disabled={loading || stock === 0} // Deshabilitar botón si no hay stock
+          className={`p-2 rounded-full transition ${
+            stock === 0
+              ? "bg-gray-200 dark:bg-gray-600 cursor-not-allowed"
+              : "bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600"
+          }`}
+          title={stock === 0 ? "Producto agotado" : "Agregar al carrito"}
         >
           {loading ? (
             <span className="loader w-4 h-4 border-2 border-t-transparent border-gray-800 rounded-full animate-spin"></span>
