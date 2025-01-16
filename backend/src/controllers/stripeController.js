@@ -91,6 +91,25 @@ const stripeWebhook = async (req, res) => {
                 console.log("Carrito procesado con éxito.");
                 console.log("Stock actualizado para los productos del pedido.");
 
+
+                try {
+                    // Insertar el pago en la base de datos
+                    await db.query(
+                        `INSERT INTO pagos (metodo_pago, estado_pago, referencia_transaccion, monto, fecha_pago)
+         VALUES (?, ?, ?, ?, NOW())`,
+                        [
+                            session.payment_method_types[0], // Método de pago (Ejemplo: 'card')
+                            'Exitoso', // Estado del pago
+                            session.payment_intent, // Referencia de la transacción
+                            session.amount_total / 100 // Monto en formato decimal
+                        ]
+                    );
+
+                    console.log("Pago registrado en la base de datos.");
+                } catch (error) {
+                    console.error("Error al registrar el pago:", error.message);
+                }
+
                 // Configurar el transporte de nodemailer
                 const transporter = nodemailer.createTransport({
                     service: "gmail",
