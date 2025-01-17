@@ -54,5 +54,21 @@ const crearCheckoutSession = async (req, res) => {
     }
 };
 
+const verPagos = async (req, res) => {
+    try {
+        // Obtener todos los pagos con la información del usuario y la dirección (si existe)
+        const [pagos] = await db.query(
+            `SELECT p.id_pago, p.fecha_pago, p.monto, u.nombre AS usuario
+             FROM pagos p
+             JOIN usuarios u ON p.id_usuario = u.id_usuario`
+        );
 
-module.exports = { crearCheckoutSession };
+        res.status(200).json(pagos);
+    } catch (error) {
+        console.error('Error al obtener los pagos:', error);
+        res.status(500).json({ mensaje: 'Error al obtener los pagos.', error });
+    }
+};
+
+
+module.exports = { crearCheckoutSession, verPagos };
