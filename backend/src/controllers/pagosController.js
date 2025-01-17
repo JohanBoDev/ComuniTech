@@ -71,6 +71,26 @@ const verPagos = async (req, res) => {
     }
 };
 
+const obtenerReporteIngresos = async (req, res) => {
+    try {
+        // Consultar los ingresos por diferentes períodos
+        const [ingresos] = await db.query(
+            `SELECT 
+                SUM(CASE WHEN fecha_pago >= DATE_SUB(NOW(), INTERVAL 1 MONTH) THEN monto ELSE 0 END) AS ingresos_ultimo_mes,
+                SUM(CASE WHEN fecha_pago >= DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN monto ELSE 0 END) AS ingresos_ultimos_3_meses,
+                SUM(CASE WHEN fecha_pago >= DATE_SUB(NOW(), INTERVAL 1 YEAR) THEN monto ELSE 0 END) AS ingresos_ultimo_ano,
+                SUM(monto) AS ingresos_totales
+             FROM pagos
+             WHERE estado_pago = 'Exitoso'`
+        );
+
+        res.status(200).json(ingresos[0]);  // Devuelve un solo objeto JSON con los totales
+    } catch (error) {
+        console.error('Error al obtener el reporte de ingresos:', error);
+        res.status(500).json({ mensaje: 'Error al obtener el reporte de ingresos.', error });
+    }
+};
+
 
 
 module.exports = { crearCheckoutSession, verPagos };
