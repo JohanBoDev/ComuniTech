@@ -58,7 +58,7 @@ const verPagos = async (req, res) => {
     try {
         // Obtener todos los pagos con la información del usuario
         const [pagos] = await db.query(
-            `SELECT p.id_pago, p.fecha_pago, p.monto, p.estado_pago, p.referencia_transaccion, 
+            `SELECT p.id_pago, p.fecha_pago, p.monto, p.metodo_pago, p.estado_pago, p.referencia_transaccion, 
                     u.nombre AS usuario
              FROM pagos p
              JOIN usuarios u ON p.id_usuario = u.id_usuario`
