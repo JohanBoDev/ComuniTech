@@ -93,4 +93,4 @@ const obtenerReporteIngresos = async (req, res) => {
 
 
 
-module.exports = { crearCheckoutSession, verPagos };
+module.exports = { crearCheckoutSession, verPagos, obtenerReporteIngresos };
