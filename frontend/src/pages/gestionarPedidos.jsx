@@ -5,6 +5,7 @@ import MobileHeader from "../layouts/mobileHeader";
 import EditarEstadoPedido from "../components/editarEstadoPedido";
 import VerDetallesPedidoAdmin from "../components/verDetallesPedidoAdmin";
 import EliminarPedido from "../components/eliminarPedido";
+import Footer from "../layouts/footer";
 import { motion } from "framer-motion";
 
 const PaginasPedidos = () => {
@@ -49,7 +50,7 @@ const PaginasPedidos = () => {
     };
 
     return (
-        <motion.div
+        <><motion.div
             className="min-h-screen p-6 bg-gray-100 dark:bg-[#1A1A1A] text-gray-900 dark:text-gray-200"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -81,11 +82,8 @@ const PaginasPedidos = () => {
                             <div className="absolute top-2 right-2 flex space-x-5">
                                 <VerDetallesPedidoAdmin pedidoId={order.id_pedido} />
                                 <EliminarPedido
-  pedidoId={order.id_pedido} // ID del pedido
-  onPedidoEliminado={(idEliminado) =>
-    setOrders((prevOrders) => prevOrders.filter((pedido) => pedido.id_pedido !== idEliminado))
-  }
-/>
+                                    pedidoId={order.id_pedido} // ID del pedido
+                                    onPedidoEliminado={(idEliminado) => setOrders((prevOrders) => prevOrders.filter((pedido) => pedido.id_pedido !== idEliminado))} />
                             </div>
                             <div className="mb-4">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200">
@@ -116,8 +114,7 @@ const PaginasPedidos = () => {
                                             ? "bg-blue-500 text-white"
                                             : order.estado === "Entregado"
                                                 ? "bg-green-500 text-white"
-                                                : "bg-red-500 text-white"
-                                        }`}
+                                                : "bg-red-500 text-white"}`}
                                 >
                                     {order.estado}
                                 </span>
@@ -126,13 +123,14 @@ const PaginasPedidos = () => {
                             <EditarEstadoPedido
                                 orderId={order.id_pedido}
                                 currentStatus={order.estado}
-                                onStatusUpdate={updateOrderStatus}
-                            />
+                                onStatusUpdate={updateOrderStatus} />
                         </motion.div>
                     ))}
                 </div>
             )}
         </motion.div>
+        <Footer />
+        </>
     );
 };
 

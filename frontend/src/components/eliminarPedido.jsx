@@ -8,7 +8,7 @@ const EliminarPedido = ({ pedidoId, onPedidoEliminado }) => {
       try {
         const token = localStorage.getItem("token");
         await axios.delete(
-          `https://comunitech.onrender.com/api/pedidos/eliminar/${pedidoId}`,
+          `https://comunitech.onrender.com/api/pedidos/eliminarPedidoAdmin/${pedidoId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
