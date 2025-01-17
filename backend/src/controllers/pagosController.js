@@ -103,7 +103,21 @@ const obtenerIngresos = async (req, res) => {
     }
 };
 
+const eliminarPago = async (req, res) => {
+    const { id_pago } = req.params;
+
+    try {
+        // Eliminar el pago de la base de datos
+        await db.query('DELETE FROM pagos WHERE id_pago = ?', [id_pago]);
+
+        res.status(200).json({ mensaje: 'Pago eliminado correctamente.' });
+    } catch (error) {
+        console.error('Error al eliminar el pago:', error);
+        res.status(500).json({ mensaje: 'Error al eliminar el pago.', error });
+    }
+}
 
 
 
-module.exports = { crearCheckoutSession, verPagos, obtenerIngresos };
+
+module.exports = { crearCheckoutSession, verPagos, obtenerIngresos, eliminarPago };
