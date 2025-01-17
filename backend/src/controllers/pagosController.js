@@ -71,25 +71,38 @@ const verPagos = async (req, res) => {
     }
 };
 
-const obtenerReporteIngresos = async (req, res) => {
+const obtenerIngresos = async (req, res) => {
     try {
-        // Consultar los ingresos por diferentes períodos
-        const [ingresos] = await db.query(
-            `SELECT 
-                SUM(CASE WHEN fecha_pago >= DATE_SUB(NOW(), INTERVAL 1 MONTH) THEN monto ELSE 0 END) AS ingresos_ultimo_mes,
-                SUM(CASE WHEN fecha_pago >= DATE_SUB(NOW(), INTERVAL 3 MONTH) THEN monto ELSE 0 END) AS ingresos_ultimos_3_meses,
-                SUM(CASE WHEN fecha_pago >= DATE_SUB(NOW(), INTERVAL 1 YEAR) THEN monto ELSE 0 END) AS ingresos_ultimo_ano,
-                SUM(monto) AS ingresos_totales
-             FROM pagos
-             WHERE estado_pago = 'Exitoso'`
-        );
+        const { periodo } = req.query; // Captura el parámetro de la URL
 
-        res.status(200).json(ingresos[0]);  // Devuelve un solo objeto JSON con los totales
+        // Validar que el período sea válido
+        const periodosValidos = {
+            "ultimo_mes": "1 MONTH",
+            "ultimos_3_meses": "3 MONTH",
+            "ultimo_ano": "1 YEAR",
+            "todos": null // Para ingresos totales
+        };
+
+        if (!periodosValidos[periodo]) {
+            return res.status(400).json({ mensaje: "Período no válido. Usa: ultimo_mes, ultimos_3_meses, ultimo_ano, todos." });
+        }
+
+        let consultaSQL = `SELECT SUM(monto) AS ingresos FROM pagos WHERE estado_pago = 'Exitoso'`;
+
+        // Agregar filtro de fecha si no es "todos"
+        if (periodo !== "todos") {
+            consultaSQL += ` AND fecha_pago >= DATE_SUB(NOW(), INTERVAL ${periodosValidos[periodo]})`;
+        }
+
+        const [resultado] = await db.query(consultaSQL);
+
+        res.status(200).json({ periodo, ingresos: resultado[0].ingresos || 0 });
     } catch (error) {
-        console.error('Error al obtener el reporte de ingresos:', error);
-        res.status(500).json({ mensaje: 'Error al obtener el reporte de ingresos.', error });
+        console.error("Error al obtener los ingresos:", error);
+        res.status(500).json({ mensaje: "Error al obtener los ingresos.", error });
     }
 };
+
 
 
 
