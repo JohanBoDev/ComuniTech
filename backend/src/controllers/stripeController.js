@@ -93,22 +93,24 @@ const stripeWebhook = async (req, res) => {
 
 
                 try {
-                    // Insertar el pago en la base de datos
+                    // Insertar el pago en la base de datos con el id_usuario
                     await db.query(
-                        `INSERT INTO pagos (metodo_pago, estado_pago, referencia_transaccion, monto, fecha_pago)
-         VALUES (?, ?, ?, ?, NOW())`,
+                        `INSERT INTO pagos (metodo_pago, estado_pago, referencia_transaccion, monto, fecha_pago, id_usuario)
+                         VALUES (?, ?, ?, ?, NOW(), ?)`,
                         [
                             session.payment_method_types[0], // Método de pago (Ejemplo: 'card')
                             'Exitoso', // Estado del pago
                             session.payment_intent, // Referencia de la transacción
-                            session.amount_total / 100 // Monto en formato decimal
+                            session.amount_total / 100, // Monto en formato decimal
+                            usuario_id // ID del usuario recuperado de la metadata de la sesión
                         ]
                     );
-
-                    console.log("Pago registrado en la base de datos.");
+                
+                    console.log("Pago registrado en la base de datos con usuario_id.");
                 } catch (error) {
                     console.error("Error al registrar el pago:", error.message);
                 }
+                
 
                 // Configurar el transporte de nodemailer
                 const transporter = nodemailer.createTransport({
