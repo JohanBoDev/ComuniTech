@@ -9,10 +9,7 @@ const EditarEstadoPedido = ({ orderId, currentStatus, onStatusUpdate }) => {
     try {
       const token = localStorage.getItem("token");
 
-      console.log("Datos enviados al backend:", {
-        id_pedido: orderId,
-        nuevo_estado: newStatus,
-      });
+
 
       if (!orderId) {
         alert("No se encontró un ID válido para el pedido.");
@@ -34,7 +31,6 @@ const EditarEstadoPedido = ({ orderId, currentStatus, onStatusUpdate }) => {
       );
 
       alert("Estado actualizado correctamente.");
-      console.log("Respuesta del servidor:", response.data);
 
       // Llamamos a la función de actualización del estado
       onStatusUpdate(orderId, newStatus);

@@ -28,11 +28,7 @@ const MiPerfil = () => {
           <UserAddresses />
           <PedidosList />
           <FavoritosList />
-          <button>
-            <Link to="/dashboard-admin">
-            Ir al panel de administrador
-            </Link>
-          </button>
+
         </div>
       </main>
 

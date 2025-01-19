@@ -73,10 +73,14 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
+    localStorage.removeItem("selectedAddress");
     setIsLoggedIn(false);
     setIsAdmin(false);
     setUser(null);
     navigate("/");
+    //mensaje de exito 
+    alert("Sesión cerrada exitosamente");
+  
   };
 
   // Función para verificar si el usuario está autenticado

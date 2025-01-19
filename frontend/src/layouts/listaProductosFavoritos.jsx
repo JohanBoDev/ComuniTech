@@ -93,24 +93,27 @@ const FavoritosList = () => {
   return (
 <div className="bg-gray-100 dark:bg-[#232323] dark:text-white p-6">
   <h1 className="text-3xl font-bold mb-8 text-center">Mis Productos Favoritos</h1>
-  <div className="max-w-4xl mx-auto bg-white dark:bg-[#1A1A1A] p-8 rounded-lg shadow-lg">
+  <div className="max-w-4xl mx-auto bg-white dark:bg-[#1A1A1A] p-6 rounded-lg shadow-lg">
     {favoritos.length > 0 ? (
       <ul className="space-y-6">
         {favoritos.map((producto) => (
           <li
             key={producto.id_producto}
-            className="flex flex-col lg:flex-row items-center bg-gray-200 dark:bg-[#2A2A2A] p-6 rounded-lg shadow-md"
+            className="flex flex-col md:flex-row items-center md:items-start bg-gray-200 dark:bg-[#2A2A2A] p-4 rounded-lg shadow-md gap-4"
           >
+            {/* Imagen del Producto */}
             <img
               src={producto.imagen_url}
               alt={producto.nombre}
-              className="w-full md:w-36 md:h-36 object-cover rounded-lg mb-4 md:mb-0 md:mr-6"
+              className="w-full max-w-[120px] md:max-w-[150px] md:w-36 md:h-36 object-cover rounded-lg"
             />
-            <div className="flex-grow text-center lg:text-left">
-              <h3 className="text-xl font-semibold truncate mb-1">
+
+            {/* Información del Producto */}
+            <div className="flex-grow text-center md:text-left w-full">
+              <h3 className="text-lg font-semibold truncate max-w-full mb-1">
                 {producto.nombre}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 overflow-hidden text-ellipsis mb-2 max-w-[280px]">
+              <p className="text-sm text-gray-600 dark:text-gray-400 break-words mb-2">
                 {producto.descripcion}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -123,11 +126,13 @@ const FavoritosList = () => {
                 <b>Stock disponible:</b> {producto.stock} unidades
               </p>
             </div>
+
+            {/* Botón Eliminar */}
             <button
               onClick={() => handleDeleteFavorito(producto.id_producto)}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm flex items-center justify-center mt-4 md:mt-0"
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm flex items-center justify-center w-full md:w-auto"
             >
-              <FontAwesomeIcon icon={faTrash} className="" />
+              <FontAwesomeIcon icon={faTrash} />
             </button>
           </li>
         ))}
@@ -139,6 +144,7 @@ const FavoritosList = () => {
     )}
   </div>
 </div>
+
 
 
   );

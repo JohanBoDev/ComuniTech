@@ -9,7 +9,7 @@ import ServicesSection from "../layouts/SeccionServicios";
 import Testimonios from "../layouts/seccionTestimonios";
 import Ubicacion from "../layouts/ubicacion";
 import Footer from "../layouts/footer";
-
+import ComoNacioComunitech from "../layouts/seccionHeroComuniTech";
 
 const Home = () => {
     const { results, isLoading, showResults, handleSearch } = useSearch();
@@ -33,6 +33,7 @@ const Home = () => {
                 showResults={showResults}
             />
             <ServicesSection />
+            <ComoNacioComunitech />
             <Testimonios />
             <Ubicacion />
 

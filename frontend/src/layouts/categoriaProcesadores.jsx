@@ -3,7 +3,6 @@ import useFetchProductsByCategory from "../hooks/useFetchProductsByCategory";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShoppingCart, faSearchMinus } from "@fortawesome/free-solid-svg-icons";
 import AddToCartButton from "../components/botonAgregarCarrito";
-import { MagicMotion } from "react-magic-motion";
 
 const CategoriaProcesadores = () => {
   const { products: procesadores, loading, error } = useFetchProductsByCategory("procesador");
@@ -133,7 +132,6 @@ const CategoriaProcesadores = () => {
                   <FontAwesomeIcon icon={faHeart} />
                 </button>
               </div>
-              <MagicMotion>
               <div className="p-4">
                 <h3 className="text-base font-semibold truncate">
                   {product.nombre}
@@ -166,7 +164,7 @@ const CategoriaProcesadores = () => {
                     {messages[product.id_producto].text}
                   </p>
                 )}
-              </div> </MagicMotion>
+              </div> 
             </div>
            
           ))

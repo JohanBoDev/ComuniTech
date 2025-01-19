@@ -15,14 +15,13 @@ const UserProfile = () => {
   // Maneja el cambio de archivo en el input
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-    console.log("Archivo seleccionado:", event.target.files[0]);
   };
 
   // Maneja la subida de la foto de perfil
   const handleUpload = async () => {
     if (!selectedFile) {
       setUploadStatus("Por favor selecciona un archivo.");
-      console.log("No se seleccionó un archivo.");
+     
       return;
     }
 
@@ -40,11 +39,11 @@ const UserProfile = () => {
       );
 
       const data = await response.json();
-      console.log("Respuesta de la API de subida:", data);
+      
 
       if (response.ok) {
         setUploadStatus("Foto subida correctamente.");
-        console.log("Foto subida correctamente:", data.fileUrl);
+        
 
         // Actualiza el contexto del usuario con la nueva URL
         if (setUser) {
@@ -52,7 +51,7 @@ const UserProfile = () => {
             ...prevUser,
             foto_perfil: data.fileUrl,
           }));
-          console.log("Foto de perfil actualizada en el contexto:", data.fileUrl);
+         
         } else {
           console.warn("setUser no está disponible en el contexto.");
         }
@@ -87,10 +86,10 @@ const UserProfile = () => {
       );
 
       const data = await response.json();
-      console.log("Respuesta de la API al guardar perfil:", data);
+     
 
       if (response.ok) {
-        console.log("Perfil actualizado correctamente.");
+        
 
         // Actualiza el contexto del usuario con el nuevo nombre y email
         if (setUser) {

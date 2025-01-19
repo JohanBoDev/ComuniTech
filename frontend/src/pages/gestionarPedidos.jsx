@@ -7,12 +7,14 @@ import VerDetallesPedidoAdmin from "../components/verDetallesPedidoAdmin";
 import EliminarPedido from "../components/eliminarPedido";
 import Footer from "../layouts/footer";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import noPermiso from "../assets/admin_no_permiso.svg";
 
 const PaginasPedidos = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
+    const { isAdmin } = useAuth();
     const token = localStorage.getItem("token");
 
     // Fetch orders from API
@@ -50,87 +52,101 @@ const PaginasPedidos = () => {
     };
 
     return (
-        <><motion.div
-            className="min-h-screen p-6 bg-gray-100 dark:bg-[#1A1A1A] text-gray-900 dark:text-gray-200"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-        >
+        <><>
             <div className="hidden xl:block">
                 <Header />
             </div>
             <div className="xl:hidden">
                 <MobileHeader />
             </div>
-            <h1 className="text-3xl font-bold mb-8 text-center">Gestión de Pedidos</h1>
+            {isAdmin ? (
+                <motion.div
+                    className="min-h-screen p-6 bg-gray-100 dark:bg-[#1A1A1A] text-gray-900 dark:text-gray-200"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
 
-            {loading ? (
-                <p className="text-center">Cargando pedidos...</p>
-            ) : error ? (
-                <p className="text-red-500 text-center">{error}</p>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {orders.map((order, index) => (
-                        <motion.div
-                            key={order.id_pedido}
-                            className="p-4 relative bg-white dark:bg-[#1E1E1E] rounded-lg shadow-lg border border-gray-300 dark:border-gray-700"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: index * 0.1 }}
-                        >
-                            <div className="absolute top-2 right-2 flex space-x-5">
-                                <VerDetallesPedidoAdmin pedidoId={order.id_pedido} />
-                                <EliminarPedido
-                                    pedidoId={order.id_pedido} // ID del pedido
-                                    onPedidoEliminado={(idEliminado) => setOrders((prevOrders) => prevOrders.filter((pedido) => pedido.id_pedido !== idEliminado))} />
-                            </div>
-                            <div className="mb-4">
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200">
-                                    Pedido #{order.id_pedido}
-                                </h2>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 ">
-                                    Cliente: {order.usuario_nombre}
-                                </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    Fecha: {new Date(order.fecha_pedido).toLocaleDateString()}
-                                </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    <span className="font-bold">Dirección:</span>{" "}
-                                    {order.direccion && `${order.direccion}, `}
-                                    {order.ciudad && `${order.ciudad}, `}
-                                    {order.estado_direccion && `${order.estado_direccion}, `}
-                                    {order.pais && `${order.pais} `}
-                                    {order.codigo_postal && `(${order.codigo_postal})`}
-                                </p>
 
-                            </div>
+                    <h1 className="text-3xl font-bold mb-8 text-center">Gestión de Pedidos</h1>
 
-                            <div className="mb-4">
-                                <span
-                                    className={`px-3 py-1 rounded-full text-sm font-semibold ${order.estado === "Pendiente"
-                                        ? "bg-yellow-500 text-white"
-                                        : order.estado === "Enviado"
-                                            ? "bg-blue-500 text-white"
-                                            : order.estado === "Entregado"
-                                                ? "bg-green-500 text-white"
-                                                : "bg-red-500 text-white"}`}
+                    {loading ? (
+                        <p className="text-center">Cargando pedidos...</p>
+                    ) : error ? (
+                        <p className="text-red-500 text-center">{error}</p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {orders.map((order, index) => (
+                                <motion.div
+                                    key={order.id_pedido}
+                                    className="p-4 relative bg-white dark:bg-[#1E1E1E] rounded-xl shadow-xl border border-gray-300 dark:border-gray-700"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, delay: index * 0.1 }}
                                 >
-                                    {order.estado}
-                                </span>
-                            </div>
+                                    <div className="mb-4">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200">
+                                            Pedido #{order.id_pedido}
+                                        </h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 ">
+                                            Cliente: {order.usuario_nombre}
+                                        </p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Fecha: {new Date(order.fecha_pedido).toLocaleDateString()}
+                                        </p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            <span className="font-bold">Dirección:</span>{" "}
+                                            {order.direccion && `${order.direccion}, `}
+                                            {order.ciudad && `${order.ciudad}, `}
+                                            {order.estado_direccion && `${order.estado_direccion}, `}
+                                            {order.pais && `${order.pais} `}
+                                            {order.codigo_postal && `(${order.codigo_postal})`}
+                                        </p>
+                                    </div>
 
-                            <EditarEstadoPedido
-                                orderId={order.id_pedido}
-                                currentStatus={order.estado}
-                                onStatusUpdate={updateOrderStatus} />
-                        </motion.div>
-                    ))}
+                                    <div className="mb-4">
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-sm font-semibold ${order.estado === "Pendiente"
+                                                ? "bg-yellow-500 text-white"
+                                                : order.estado === "Enviado"
+                                                    ? "bg-blue-500 text-white"
+                                                    : order.estado === "Entregado"
+                                                        ? "bg-green-500 text-white"
+                                                        : "bg-red-500 text-white"}`}
+                                        >
+                                            {order.estado}
+                                        </span>
+                                    </div>
+
+                                    <EditarEstadoPedido
+                                        orderId={order.id_pedido}
+                                        currentStatus={order.estado}
+                                        onStatusUpdate={updateOrderStatus}
+                                    />
+                                    <VerDetallesPedidoAdmin pedidoId={order.id_pedido} />
+                                    <div className="absolute top-2 right-2">
+                                        <EliminarPedido
+                                            pedidoId={order.id_pedido} // ID del pedido
+                                            onPedidoEliminado={(idEliminado) => setOrders((prevOrders) => prevOrders.filter((pedido) => pedido.id_pedido !== idEliminado))} />
+                                    </div>
+
+
+
+
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+                </motion.div>
+            ) : (
+                <div className="flex-grow dark:bg-black bg-white container mx-auto  p-4 md:p-8 ">
+                    <img src={noPermiso} alt="No tienes permisos" className="mx-auto size-96 mb-10 " />
+                    <h1 className="text-3xl dark:text-white text-black font-bold mb-6 text-center">¡Ups! No tienes permisos para acceder a esta página</h1>
                 </div>
             )}
-        </motion.div>
-        <Footer />
-        </>
+        </><Footer /></>
+
     );
 };
 

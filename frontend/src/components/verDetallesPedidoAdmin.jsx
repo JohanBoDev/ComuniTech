@@ -51,7 +51,7 @@ const VerDetallesPedidoAdmin = ({ pedidoId }) => {
       {/* Botón para abrir el modal */}
       <button
         onClick={handleOpenModal}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded shadow-md"
+        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded shadow-md w-full my-2"
       >
         Ver Detalles
       </button>

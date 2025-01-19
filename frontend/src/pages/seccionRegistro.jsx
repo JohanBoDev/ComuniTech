@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext"; // Para manejar el contexto de
 import registerVideo from "../assets/backgrounds/login-comuni.mp4";
 import Header from "../layouts/desktopHeader";
 import MobileHeader from "../layouts/mobileHeader";
+import Footer from "../layouts/footer";
 
 const Register = () => {
   const [nombre, setNombre] = useState("");
@@ -85,7 +86,7 @@ const Register = () => {
         </div>
 
         {/* Formulario de registro */}
-        <div className="relative z-10 w-full lg:w-1/2 flex justify-center items-center p-6">
+        <div className="relative  w-full lg:w-1/2 flex justify-center items-center p-6">
           <div className="bg-white dark:bg-black/80 border border-gray-300 dark:border-gray-700 rounded-lg p-8 w-full max-w-md shadow-xl">
             <h2 className="text-3xl font-bold text-center mb-6">Crear Cuenta</h2>
             <form onSubmit={handleRegister} className="space-y-6">
@@ -178,6 +179,7 @@ const Register = () => {
           </div>
         </div>
       </section>
+      < Footer />
     </>
   );
 };

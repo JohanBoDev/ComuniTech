@@ -48,7 +48,7 @@ const BotonEditarProducto = ({ id, onProductoEditado }) => {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Producto editado correctamente: " + data.mensaje);
+        alert(data.mensaje);
         setIsModalOpen(false); // Cierra el modal
 
         if (onProductoEditado) {

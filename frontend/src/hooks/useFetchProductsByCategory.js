@@ -14,7 +14,6 @@ const useFetchProductsByCategory = (category) => {
         const response = await axios.get(
           `https://comunitech.onrender.com/api/productos/categoria/${encodeURIComponent(category)}`
         );
-        console.log("API Response:", response.data); // Debug: Verifica la respuesta
         setProducts(Array.isArray(response.data) ? response.data : []); // Asegura que sea un arreglo
         setError(null);
       } catch (err) {

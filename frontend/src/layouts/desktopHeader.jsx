@@ -5,13 +5,13 @@ import BuscarProducto from "../components/buscarProducto";
 import iconoComunitech from "../assets/icono-comunitech.png";
 import { useAuth } from "../context/AuthContext"; // Importar el contexto
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShoppingCart, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faShoppingCart, faUser, faSignOutAlt, faTachometerAlt  } from "@fortawesome/free-solid-svg-icons";
 
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth(); // Accede a los valores y métodos del contexto
+  const { isLoggedIn, logout, isAdmin } = useAuth(); // Accede a los valores y métodos del contexto
 
   // Función para manejar la búsqueda
   const handleSearch = (searchTerm) => {
@@ -25,7 +25,7 @@ const Header = () => {
       <header className="bg-white text-black dark:bg-[#121212] dark:text-white border-b-2 border-gray-400 p-4 flex items-center justify-between fixed top-0 left-0 w-full z-10">
         {/* Logo */}
         <Link className="flex items-center" to="/">
-        <img src={iconoComunitech} className="w-10 h-10" alt="" />
+          <img src={iconoComunitech} className="w-10 h-10" alt="" />
           <h1 className="text-2xl font-semibold font-titulo">ComuniTech</h1>
         </Link>
 
@@ -50,6 +50,18 @@ const Header = () => {
                     Ver mi Perfil
                   </Link>
                 </li>
+                {isAdmin && (
+                  <li>
+                    <Link
+                      to="/dashboard-admin"
+                      className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-500 hover:text-white dark:hover:bg-gray-300 dark:hover:text-black font-texto transition duration-200"
+                    >
+                      <FontAwesomeIcon icon={faTachometerAlt } className="text-xl" />
+                      Panel de administrador
+                    </Link>
+                  </li>
+                )}
+
                 <li>
                   <button
                     onClick={logout}

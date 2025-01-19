@@ -5,6 +5,7 @@ import axios from "axios";
 import loginVideo from "../assets/backgrounds/login-comuni.mp4";
 import Header from "../layouts/desktopHeader";
 import MobileHeader from "../layouts/mobileHeader";
+import Footer from "../layouts/footer";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -80,7 +81,7 @@ const Login = () => {
           ></video>
         </div>
 
-        <div className="relative z-10 w-full lg:w-1/2 flex justify-center items-center p-6">
+        <div className="relative  w-full lg:w-1/2 flex justify-center items-center p-6">
           <div className="bg-white dark:bg-black/80 border border-gray-300 dark:border-gray-700 rounded-lg p-8 w-full max-w-md shadow-xl">
             <h2 className="text-3xl font-bold text-center mb-6">Iniciar Sesión</h2>
 
@@ -169,6 +170,7 @@ const Login = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </>
   );
 };

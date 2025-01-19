@@ -15,14 +15,17 @@ import {
   faUserCircle,
   faShoppingCart,
   faSignOutAlt,
+  faTachometerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import BuscarProducto from "../components/buscarProducto";
 import ThemeToggleButton from "../components/botonTema";
 import { useAuth } from "../context/AuthContext";
 
+
 function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuth(); // Obtén estado de autenticación y función logout del contexto
   const closeMenu = () => setIsMenuOpen(false);
@@ -139,7 +142,7 @@ function MobileHeader() {
             </li>
             <li>
               <Link
-                to="/almacenamiento"
+                to="/storage"
                 onClick={closeMenu}
                 className="flex items-center gap-2 pb-2 border-b border-gray-700 hover:text-gray-500 dark:hover:text-gray-300"
               >
@@ -181,6 +184,15 @@ function MobileHeader() {
                 <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
                 Ver mi Carrito
               </Link>
+
+              {/* Ver panel de administrador */}
+              {isAdmin && (
+                <Link to="/dashboard-admin" onClick={closeMenu} className="py-2 px-4 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-400 hover:to-green-600 text-white font-bold rounded-lg shadow-lg transition-all duration-300 text-center">
+                  <FontAwesomeIcon icon={faTachometerAlt} className="mr-2" />
+                  Panel de Admin
+                </Link>
+              )}
+
 
               {/* Cerrar sesión */}
               <button

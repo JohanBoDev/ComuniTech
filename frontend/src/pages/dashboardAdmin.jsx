@@ -38,9 +38,9 @@ const AdminDashboard = () => {
               <Link to="/administrarPedidos" className="w-full flex justify-center items-center font-titulo py-4 px-6 text-lg bg-gray-200 dark:bg-[#1A1A1A] text-gray-800 dark:text-gray-200 font-semibold rounded-lg shadow-md hover:bg-gray-300 dark:hover:bg-gray-700 transition">
                 Gestión de pedidos
               </Link>
-              <button className="w-full font-titulo py-4 px-6 text-lg bg-gray-200 dark:bg-[#1A1A1A] text-gray-800 dark:text-gray-200 font-semibold rounded-lg shadow-md hover:bg-gray-300 dark:hover:bg-gray-700 transition">
-                Gestión de Pagos
-              </button>
+              <Link to="/administrarPagos" className="w-full flex justify-center items-center font-titulo py-4 px-6 text-lg bg-gray-200 dark:bg-[#1A1A1A] text-gray-800 dark:text-gray-200 font-semibold rounded-lg shadow-md hover:bg-gray-300 dark:hover:bg-gray-700 transition">
+                Gestión de pagos
+              </Link>
             </div>
           </div>
         </main>
