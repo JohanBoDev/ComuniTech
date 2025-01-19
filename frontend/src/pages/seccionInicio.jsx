@@ -10,7 +10,7 @@ const HomeSection = () => {
       {/* Video de fondo */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        src="src/assets/backgrounds/buildComunitech.mp4"
+        src="/buildComuniTech.mp4"
         autoPlay
         loop
         muted
