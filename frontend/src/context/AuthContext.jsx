@@ -78,8 +78,7 @@ export const AuthProvider = ({ children }) => {
     setIsAdmin(false);
     setUser(null);
     navigate("/");
-    //mensaje de exito 
-    alert("Sesión cerrada exitosamente");
+
   
   };
 
