@@ -47,7 +47,7 @@ ComuniTech es una plataforma de comercio electrónico diseñada para que los usu
 - **Hosting:** Vercel para optimizar el rendimiento en dispositivos móviles y desktop.
 
 ### Backend
-- **Hosting:** Render o Railway para manejar la lógica del servidor y las conexiones a la base de datos.
+- **Hosting:** Render y Railway para manejar la lógica del servidor y las conexiones a la base de datos.
 
 ### Base de Datos
 - **MySQL:** Desplegado en Railway.
