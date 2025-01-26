@@ -1,5 +1,8 @@
 # ComuniTech
 
+ ![Comunitech]([ruta/de/la/imagen.png](https://github.com/JohanBoDev/ComuniTech/commit/c5a884207929c0fbd00e6aed7a31ee66b0fb2ba9))
+
+
 ComuniTech es una plataforma de comercio electrónico diseñada para que los usuarios puedan explorar, seleccionar y comprar componentes tecnológicos de manera fácil, segura y confiable desde la comodidad de su hogar. La aplicación incluye funcionalidades completas para la gestión de productos, pedidos, usuarios y pagos, proporcionando una experiencia fluida tanto para clientes como para administradores.
 
 ## Características Principales
