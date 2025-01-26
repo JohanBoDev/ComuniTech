@@ -1,5 +1,9 @@
 # ComuniTech
 
+![Descripción de la imagen](https://raw.githubusercontent.com/JohanBoDev/ComuniTech/main/comuniTech.png)
+
+
+
 ComuniTech es una plataforma de comercio electrónico diseñada para que los usuarios puedan explorar, seleccionar y comprar componentes tecnológicos de manera fácil, segura y confiable desde la comodidad de su hogar. La aplicación incluye funcionalidades completas para la gestión de productos, pedidos, usuarios y pagos, proporcionando una experiencia fluida tanto para clientes como para administradores.
 
 ## Características Principales
@@ -47,7 +51,7 @@ ComuniTech es una plataforma de comercio electrónico diseñada para que los usu
 - **Hosting:** Vercel para optimizar el rendimiento en dispositivos móviles y desktop.
 
 ### Backend
-- **Hosting:** Render o Railway para manejar la lógica del servidor y las conexiones a la base de datos.
+- **Hosting:** Render y Railway para manejar la lógica del servidor y las conexiones a la base de datos.
 
 ### Base de Datos
 - **MySQL:** Desplegado en Railway.
