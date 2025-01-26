@@ -1,6 +1,6 @@
 # ComuniTech
 
- ![Logo]([https://raw.githubusercontent.com/johanbohorquez/comunitech/main/assets/logo.png](https://github.com/JohanBoDev/ComuniTech/blob/main/comunitechInicio))
+![Descripción de la imagen](https://raw.githubusercontent.com/JohanBoDev/ComuniTech/main/comuniTech.png)
 
 
 
